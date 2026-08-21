@@ -1,0 +1,187 @@
+{
+  "meta": {
+    "title": "UWA — Ukrainian Wrestling Arena",
+    "description": "UWA is Ukraine's premier wrestling promotion: events, roster, titles and news."
+  },
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "roster": "Roster",
+    "titles": "Titles",
+    "matches": "Matches",
+    "news": "News",
+    "media": "Media",
+    "universe": "UWA Universe",
+    "academy": "Academy",
+    "shop": "Shop",
+    "about": "About UWA"
+  },
+  "header": {
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "tickets": "Tickets"
+  },
+  "footer": {
+    "tagline": "Ukraine's wrestling arena. The fight starts here.",
+    "sections": "Sections",
+    "follow": "Follow us",
+    "rights": "© {year} UWA — Ukrainian Wrestling Arena. All rights reserved."
+  },
+  "home": {
+    "kicker": "UKRAINIAN WRESTLING ARENA",
+    "titleLine1": "NO COMPROMISE",
+    "titleLine2": "IN THE RING",
+    "tagline": "Ukraine's most electrifying wrestling promotion. Legends are made on our ring.",
+    "ctaPrimary": "Upcoming Events",
+    "ctaSecondary": "View Roster"
+  },
+  "comingSoon": {
+    "badge": "Coming soon",
+    "description": "This section is under construction. We're building something spectacular — check back soon!",
+    "roadmapTitle": "What's coming to this section",
+    "back": "Back to home"
+  },
+  "nextEvent": {
+    "eyebrow": "UWA'S 10TH ANNIVERSARY",
+    "title": "SUMMERTIME MADNESS",
+    "subtitle": "An anniversary supershow celebrating 10 years of UWA",
+    "dateLabel": "Date & time",
+    "date": "August 22, 2026, 4:00 PM",
+    "venueLabel": "Venue",
+    "venue": "Porter Pub, 107 Zhylianska St, Kyiv, Ukraine",
+    "description": "International stars from the US, UK, Scotland, Poland and Romania. Every UWA championship on the line. A night that will go down in Ukrainian Wrestling Arena history forever.",
+    "cta": "Buy Tickets"
+  },
+  "roadmap": {
+    "homeTitle": "Coming soon to the homepage",
+    "home": [
+      "Latest news",
+      "Upcoming events",
+      "Latest matches / YouTube videos",
+      "Videos, highlights, Instagram or TikTok",
+      "Shop",
+      "Partners (if any)"
+    ],
+    "events": [
+      {
+        "label": "Upcoming shows",
+        "children": [
+          {
+            "label": "Individual show page",
+            "children": ["Poster", "Description", "Card", "Location", "Tickets", "Results (after the show)"]
+          }
+        ]
+      },
+      {
+        "label": "Show archive",
+        "children": [
+          {
+            "label": "Individual show page",
+            "children": ["Poster", "Description", "Card", "Results (after the show)"]
+          }
+        ]
+      },
+      {
+        "label": "PPV / Special Events",
+        "children": [
+          {
+            "label": "Individual show page",
+            "children": ["Poster", "Description", "Card", "Results (after the show)"]
+          }
+        ]
+      }
+    ],
+    "roster": [
+      "Men",
+      "Women",
+      "Teams",
+      "Managers",
+      "Referees",
+      {
+        "label": "Alumni",
+        "children": [
+          {
+            "label": "Wrestler profile",
+            "children": [
+              "Photo",
+              "Ring name",
+              "Bio / description",
+              "Stats",
+              "Titles",
+              "Match history",
+              "Videos",
+              "Related rivalries (optional)"
+            ]
+          }
+        ]
+      }
+    ],
+    "titles": [
+      "UWA World Championship",
+      "Tag Team Championship",
+      "Women's Championship",
+      "Extreme Championship",
+      "Capital Cup",
+      {
+        "label": "History of each title/cup",
+        "children": ["Current champion / holder", "Previous champions / holders", "Stats"]
+      }
+    ],
+    "matches": [
+      "Latest results",
+      "All matches",
+      "By wrestler",
+      "By show",
+      "By match type"
+    ],
+    "news": [
+      "Announcements",
+      "Show advertising",
+      "Promos",
+      "Show reports",
+      "Interviews",
+      "Behind the scenes",
+      "Misc"
+    ],
+    "media": [
+      {
+        "label": "Photos",
+        "note": "Still deciding where to host photos, or whether to pull them from social media."
+      },
+      "Optional — pull from Instagram?",
+      {
+        "label": "Videos",
+        "note": "Likely via YouTube."
+      }
+    ],
+    "universe": [
+      "Promotion history",
+      "Factions (optional)",
+      "Teams (optional)",
+      "Rivalries (very optional)",
+      "Hall of Fame"
+    ],
+    "academy": [
+      "About the training",
+      "Schedule",
+      "Coaches",
+      "Pricing",
+      "FAQ",
+      "Apply"
+    ],
+    "shop": [
+      "Tickets (may need its own section)",
+      "Apparel",
+      "Accessories",
+      "Posters",
+      "Misc"
+    ],
+    "about": [
+      "Mission",
+      "Team",
+      "Partners",
+      "For media",
+      "Contacts"
+    ]
+  }
+}
