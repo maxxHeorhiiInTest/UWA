@@ -9,16 +9,16 @@ export function LocaleSwitcher() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-1 rounded-full border border-uwa-panel-border bg-uwa-panel p-1 text-xs font-semibold uppercase">
+    <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wide">
       {routing.locales.map((locale) => (
         <Link
           key={locale}
           href={pathname}
           locale={locale}
-          className={`rounded-full px-2.5 py-1 transition-colors ${
+          className={`transition-colors ${
             locale === activeLocale
-              ? "bg-uwa-gold text-uwa-black"
-              : "text-uwa-white/60 hover:text-uwa-white"
+              ? "text-uwa-white"
+              : "text-uwa-white/40 hover:text-uwa-white/70"
           }`}
         >
           {locale}

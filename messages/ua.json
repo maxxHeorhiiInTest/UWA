@@ -14,26 +14,23 @@
     "universe": "Всесвіт UWA",
     "academy": "Академія",
     "shop": "Магазин",
-    "about": "Про UWA"
+    "about": "Про нас"
   },
   "header": {
     "menuOpen": "Відкрити меню",
     "menuClose": "Закрити меню",
-    "tickets": "Квитки"
+    "tickets": "Квитки",
+    "partners": "Партнерам"
   },
   "footer": {
-    "tagline": "Українська рестлінг-арена. Бій починається тут.",
-    "sections": "Розділи",
-    "follow": "Соцмережі",
     "rights": "© {year} UWA — Ukrainian Wrestling Arena. Усі права захищено."
   },
   "home": {
-    "kicker": "UKRAINIAN WRESTLING ARENA",
-    "titleLine1": "БІЙ БЕЗ",
-    "titleLine2": "КОМПРОМІСІВ",
-    "tagline": "Найзрілищніший рестлінг-промоушен України. Легенди створюються на нашому рингу.",
-    "ctaPrimary": "Найближчі події",
-    "ctaSecondary": "Переглянути ростер"
+    "titleLine1": "УКРАЇНСЬКА",
+    "titleLine2": "РЕСЛІНГ",
+    "titleLine3": "АРЕНА",
+    "subtitle": "Ювілейне «Літнє Божевілля» завершилося, але залишило після себе багато запитань.",
+    "ctaPrimary": "Придбати квиток"
   },
   "comingSoon": {
     "badge": "Скоро",

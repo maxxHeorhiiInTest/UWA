@@ -5,7 +5,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
 
 const inter = Inter({
@@ -57,11 +56,10 @@ export default async function LocaleLayout({
       lang={locale}
       className={`${inter.variable} ${russoOne.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-uwa-black text-uwa-white font-sans">
+      <body className="h-dvh flex flex-col overflow-hidden bg-uwa-black text-uwa-white font-sans">
         <NextIntlClientProvider>
           <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <main className="min-h-0 flex-1">{children}</main>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -16,7 +16,7 @@ export function MobileMenu({
   const pathname = usePathname();
 
   return (
-    <div className="lg:hidden">
+    <div className="relative">
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
@@ -42,7 +42,7 @@ export function MobileMenu({
       </button>
 
       {isOpen && (
-        <div className="absolute inset-x-0 top-full border-t border-uwa-panel-border bg-uwa-black-soft px-6 py-4">
+        <div className="absolute inset-x-0 top-full z-10 w-64 border border-uwa-panel-border bg-uwa-panel px-6 py-4 shadow-xl">
           <nav className="flex flex-col gap-4">
             {items.map((item) => {
               const isActive = pathname === item.href;
@@ -51,8 +51,8 @@ export function MobileMenu({
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`text-base font-medium uppercase tracking-wide ${
-                    isActive ? "text-uwa-gold" : "text-uwa-white/80"
+                  className={`text-sm font-medium uppercase tracking-wide transition-colors hover:text-uwa-red ${
+                    isActive ? "text-uwa-red" : "text-uwa-white/80"
                   }`}
                 >
                   {item.label}

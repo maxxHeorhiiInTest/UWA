@@ -1,8 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { navItems } from "@/config/nav";
+import { headerNavItems, navItems } from "@/config/nav";
 import { externalLinks } from "@/config/links";
 import { Logo } from "@/components/ui/Logo";
+import { SparkleIcon, TicketBadgeIcon } from "@/components/ui/Icons";
 import { NavLink } from "./NavLink";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileMenu } from "./MobileMenu";
@@ -13,25 +14,34 @@ export async function Header() {
     getTranslations("header"),
   ]);
 
-  const items = navItems.map((item) => ({
+  const items = headerNavItems.map((item) => ({
+    href: item.href,
+    label: tNav(item.key),
+  }));
+
+  const allItems = navItems.map((item) => ({
     href: item.href,
     label: tNav(item.key),
   }));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-uwa-panel-border bg-uwa-black/95 backdrop-blur">
-      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-uwa-black">
+      <div className="mx-auto flex h-16 max-w-[1920px] items-center gap-5 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 font-heading text-2xl tracking-wider text-uwa-white"
+          className="flex shrink-0 items-center text-uwa-red"
+          aria-label="UWA"
         >
-          <Logo className="h-9 w-auto" idPrefix="header-logo" />
-          <span className="hidden sm:inline">
-            UW<span className="text-uwa-gold">A</span>
-          </span>
+          <Logo className="h-8 w-auto" />
         </Link>
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 overflow-x-auto lg:flex">
+        <MobileMenu
+          items={allItems}
+          openLabel={tHeader("menuOpen")}
+          closeLabel={tHeader("menuClose")}
+        />
+
+        <nav className="hidden flex-1 items-center gap-6 overflow-x-auto lg:flex">
           {items.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}
@@ -39,21 +49,26 @@ export async function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-5">
+          <Link
+            href="/about"
+            className="hidden items-center gap-2 text-xs font-bold uppercase tracking-wide text-uwa-white/80 transition-colors hover:text-uwa-red md:flex"
+          >
+            <SparkleIcon className="h-3.5 w-3.5" />
+            {tHeader("partners")}
+          </Link>
+
+          <LocaleSwitcher />
+
           <a
             href={externalLinks.tickets}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden rounded-full bg-uwa-gold px-4 py-2 text-xs font-bold uppercase tracking-wide text-uwa-black transition-colors hover:bg-uwa-gold-dark sm:inline-block"
+            className="hidden items-center gap-2 bg-uwa-red px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:inline-flex"
           >
+            <TicketBadgeIcon className="h-4 w-4" />
             {tHeader("tickets")}
           </a>
-          <LocaleSwitcher />
-          <MobileMenu
-            items={items}
-            openLabel={tHeader("menuOpen")}
-            closeLabel={tHeader("menuClose")}
-          />
         </div>
       </div>
     </header>

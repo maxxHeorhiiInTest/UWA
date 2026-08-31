@@ -24,3 +24,19 @@ export const navItems: { href: string; key: NavKey }[] = [
   { href: "/shop", key: "shop" },
   { href: "/about", key: "about" },
 ];
+
+// Matches the exact header nav from the UWA Figma file: a shorter set of
+// links than the full sitemap. The rest of the sitemap is still reachable
+// from the footer.
+const headerNavKeys: NavKey[] = [
+  "events",
+  "roster",
+  "academy",
+  "news",
+  "shop",
+  "about",
+];
+
+export const headerNavItems = headerNavKeys.map(
+  (key) => navItems.find((item) => item.key === key)!
+);

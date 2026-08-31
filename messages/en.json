@@ -14,26 +14,23 @@
     "universe": "UWA Universe",
     "academy": "Academy",
     "shop": "Shop",
-    "about": "About UWA"
+    "about": "About Us"
   },
   "header": {
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
-    "tickets": "Tickets"
+    "tickets": "Tickets",
+    "partners": "Partners"
   },
   "footer": {
-    "tagline": "Ukraine's wrestling arena. The fight starts here.",
-    "sections": "Sections",
-    "follow": "Follow us",
     "rights": "© {year} UWA — Ukrainian Wrestling Arena. All rights reserved."
   },
   "home": {
-    "kicker": "UKRAINIAN WRESTLING ARENA",
-    "titleLine1": "NO COMPROMISE",
-    "titleLine2": "IN THE RING",
-    "tagline": "Ukraine's most electrifying wrestling promotion. Legends are made on our ring.",
-    "ctaPrimary": "Upcoming Events",
-    "ctaSecondary": "View Roster"
+    "titleLine1": "UKRAINIAN",
+    "titleLine2": "WRESTLING",
+    "titleLine3": "ARENA",
+    "subtitle": "The anniversary 'Summertime Madness' has ended, but it left plenty of questions behind.",
+    "ctaPrimary": "Buy a ticket"
   },
   "comingSoon": {
     "badge": "Coming soon",

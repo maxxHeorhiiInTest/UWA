@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --uwa-black: #08080a;
-  --uwa-black-soft: #111114;
-  --uwa-panel: #17171b;
-  --uwa-panel-border: #2a2a30;
-  /* Palette pulled directly from the UWA emblem: gold + blue instead of red/black. */
-  --uwa-gold: #e7b93a;
-  --uwa-gold-dark: #b9891a;
-  --uwa-blue: #3868d6;
-  --uwa-blue-dark: #23438f;
+  /* Palette matched to the official UWA Figma file (source of truth): a dark
+     charcoal shell with a single crimson-red accent, sampled directly from
+     the design's header/CTA buttons. */
+  --uwa-black: #0a0a0a;
+  --uwa-black-soft: #131313;
+  --uwa-panel: #1a1a1a;
+  --uwa-panel-border: #2a2a2a;
+  --uwa-red: #d6003d;
+  --uwa-red-dark: #9e0030;
   --uwa-white: #f5f5f5;
 }
 
@@ -18,10 +18,8 @@
   --color-uwa-black-soft: var(--uwa-black-soft);
   --color-uwa-panel: var(--uwa-panel);
   --color-uwa-panel-border: var(--uwa-panel-border);
-  --color-uwa-gold: var(--uwa-gold);
-  --color-uwa-gold-dark: var(--uwa-gold-dark);
-  --color-uwa-blue: var(--uwa-blue);
-  --color-uwa-blue-dark: var(--uwa-blue-dark);
+  --color-uwa-red: var(--uwa-red);
+  --color-uwa-red-dark: var(--uwa-red-dark);
   --color-uwa-white: var(--uwa-white);
 
   --font-heading: var(--font-russo-one);
