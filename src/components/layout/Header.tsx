@@ -41,7 +41,7 @@ export async function Header() {
           closeLabel={tHeader("menuClose")}
         />
 
-        <nav className="hidden flex-1 items-center gap-6 overflow-x-auto lg:flex">
+        <nav className="scrollbar-none hidden flex-1 items-center gap-6 overflow-x-auto lg:flex">
           {items.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}

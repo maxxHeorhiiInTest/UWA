@@ -39,4 +39,22 @@ body {
   .diagonal-clip {
     clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
   }
+
+  /* Hides the scrollbar track/arrow-buttons on an overflow-auto element
+     while keeping it scrollable. Used on the header's desktop nav, which
+     carries overflow-x-auto purely as a safety net in case nav labels
+     don't quite fit at the lg breakpoint. macOS's overlay scrollbars make
+     that safety net invisible by default, but Windows (and Firefox on any
+     OS) draws a classic scrollbar with a clickable arrow button at the
+     end — which shows up as a stray box/arrow glyph right next to the
+     "Partners" link whenever the nav is even a pixel over its available
+     width (e.g. from slightly different Cyrillic font-fallback metrics). */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
