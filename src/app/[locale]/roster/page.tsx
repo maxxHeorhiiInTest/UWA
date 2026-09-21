@@ -1,7 +1,7 @@
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ComingSoonPage } from "@/components/ui/ComingSoonPage";
-import type { RoadmapNode } from "@/types/roadmap";
+import { RosterView } from "@/components/roster/RosterView";
+import type { RosterCategory } from "@/config/roster";
 
 export default async function RosterPage({
   params,
@@ -10,15 +10,31 @@ export default async function RosterPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tRoadmap] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("roadmap"),
-  ]);
+  const t = await getTranslations("rosterPage");
+
+  const categories = {
+    men: t("categories.men"),
+    women: t("categories.women"),
+    guests: t("categories.guests"),
+    teams: t("categories.teams"),
+    managers: t("categories.managers"),
+    referees: t("categories.referees"),
+    alumni: t("categories.alumni"),
+  } as Record<RosterCategory, string>;
 
   return (
-    <ComingSoonPage
-      title={t("roster")}
-      roadmap={tRoadmap.raw("roster") as RoadmapNode[]}
+    <RosterView
+      copy={{
+        title: t("title"),
+        categories,
+        sections: {
+          titles: t("sections.titles"),
+          matches: t("sections.matches"),
+          videos: t("sections.videos"),
+          rivalries: t("sections.rivalries"),
+        },
+        photoSoon: t("photoSoon"),
+      }}
     />
   );
 }

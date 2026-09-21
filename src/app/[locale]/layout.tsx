@@ -59,7 +59,7 @@ export default async function LocaleLayout({
       <body className="h-dvh flex flex-col overflow-hidden bg-uwa-black text-uwa-white font-sans">
         <NextIntlClientProvider>
           <Header />
-          <main className="min-h-0 flex-1">{children}</main>
+          <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
         </NextIntlClientProvider>
       </body>
     </html>

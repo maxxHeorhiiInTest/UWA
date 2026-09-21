@@ -1,0 +1,10 @@
+---
+description: Default roster category when adding wrestlers
+alwaysApply: true
+---
+
+# Roster additions
+
+If the user adds a wrestler and does not name a category, put them in **men** (the main roster).
+
+Use guests, women, teams, managers, referees, or alumni only when they explicitly say so.

@@ -32,6 +32,25 @@
     "subtitle": "The anniversary 'Summertime Madness' has ended, but it left plenty of questions behind.",
     "ctaPrimary": "Buy a ticket"
   },
+  "rosterPage": {
+    "title": "ROSTER",
+    "photoSoon": "Render coming soon",
+    "categories": {
+      "men": "Men",
+      "women": "Women",
+      "guests": "Guests",
+      "teams": "Teams",
+      "managers": "Managers",
+      "referees": "Referees",
+      "alumni": "Alumni"
+    },
+    "sections": {
+      "titles": "Titles",
+      "matches": "Match history",
+      "videos": "Video",
+      "rivalries": "Related rivalries"
+    }
+  },
   "comingSoon": {
     "badge": "Coming soon",
     "description": "This section is under construction. We're building something spectacular — check back soon!",
@@ -91,6 +110,7 @@
     "roster": [
       "Men",
       "Women",
+      "Guests",
       "Teams",
       "Managers",
       "Referees",

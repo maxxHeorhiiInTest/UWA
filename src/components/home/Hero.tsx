@@ -1,22 +1,8 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { externalLinks } from "@/config/links";
-import {
-  ArrowRightIcon,
-  FacebookIcon,
-  InstagramIcon,
-  TikTokIcon,
-  XIcon,
-  YoutubeIcon,
-} from "@/components/ui/Icons";
-
-const socialLinks = [
-  { label: "Facebook", href: externalLinks.facebook, Icon: FacebookIcon },
-  { label: "Instagram", href: externalLinks.instagram, Icon: InstagramIcon },
-  { label: "YouTube", href: externalLinks.youtube, Icon: YoutubeIcon },
-  { label: "TikTok", href: externalLinks.tiktok, Icon: TikTokIcon },
-  { label: "X", href: externalLinks.twitter, Icon: XIcon },
-];
+import { ArrowRightIcon } from "@/components/ui/Icons";
+import { SocialRail } from "@/components/layout/SocialRail";
 
 export async function Hero() {
   const [t, tFooter] = await Promise.all([
@@ -94,22 +80,7 @@ export async function Hero() {
         </a>
       </div>
 
-      {/* Vertical social rail, right edge — each icon sits in its own dark
-          tile, stacked with no gap, matching the Figma component. */}
-      <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 flex-col lg:flex">
-        {socialLinks.map((social) => (
-          <a
-            key={social.label}
-            href={social.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={social.label}
-            className="flex h-11 w-11 items-center justify-center bg-black text-uwa-white/70 transition-colors hover:bg-uwa-red hover:text-uwa-white"
-          >
-            <social.Icon className="h-4 w-4" />
-          </a>
-        ))}
-      </div>
+      <SocialRail />
 
       <p className="absolute bottom-3 left-4 text-[11px] text-uwa-white/40 sm:left-10 lg:left-16">
         {tFooter("rights", { year: new Date().getFullYear() })}
