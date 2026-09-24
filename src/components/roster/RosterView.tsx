@@ -254,7 +254,8 @@ function WrestlerDialog({
               );
             })}
           </div>
-          {wrestler.category !== "managers" && (
+          {wrestler.category !== "managers" &&
+            wrestler.category !== "referees" && (
             <div className="mt-8">
               {sections.map((section) => {
                 const open = openSection === section.key;
