@@ -26,7 +26,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-uwa-black">
-      <div className="mx-auto flex h-16 max-w-[1920px] items-center gap-5 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-[1920px] items-center gap-3 px-4 sm:gap-5 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="flex shrink-0 items-center text-uwa-red"
@@ -39,6 +39,8 @@ export async function Header() {
           items={allItems}
           openLabel={tHeader("menuOpen")}
           closeLabel={tHeader("menuClose")}
+          ticketsHref={externalLinks.tickets}
+          ticketsLabel={tHeader("tickets")}
         />
 
         <nav className="scrollbar-none hidden flex-1 items-center gap-6 overflow-x-auto lg:flex">
@@ -49,7 +51,7 @@ export async function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-5">
+        <div className="ml-auto flex items-center gap-3 sm:gap-5">
           <Link
             href="/about"
             className="hidden items-center gap-2 text-xs font-bold uppercase tracking-wide text-uwa-white/80 transition-colors hover:text-uwa-red md:flex"
@@ -60,6 +62,14 @@ export async function Header() {
 
           <LocaleSwitcher />
 
+          <a
+            href={externalLinks.tickets}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center bg-uwa-red px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:hidden"
+          >
+            {tHeader("tickets")}
+          </a>
           <a
             href={externalLinks.tickets}
             target="_blank"

@@ -38,13 +38,7 @@ export async function Hero() {
           background on the left so the bilingual heading text stays
           legible over a plain dark backdrop. */}
       <div
-        className="absolute inset-0"
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, transparent 36%, black 54%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, transparent 36%, black 54%)",
-        }}
+        className="absolute inset-0 lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_36%,black_54%)] lg:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_36%,black_54%)]"
         aria-hidden
       >
         <Image
@@ -52,20 +46,23 @@ export async function Hero() {
           alt=""
           fill
           priority
-          className="object-cover"
-          style={{ objectPosition: "center top" }}
+          className="object-cover object-[62%_top] sm:object-[center_top]"
           sizes="100vw"
         />
       </div>
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-uwa-black via-uwa-black/70 to-black/20 lg:hidden"
+        aria-hidden
+      />
 
-      <div className="relative mx-auto flex h-full max-w-[1920px] flex-col justify-center px-4 py-10 sm:px-10 lg:px-16">
-        <h1 className="font-heading text-5xl leading-[1.02] tracking-wide text-uwa-white sm:text-6xl lg:text-7xl">
+      <div className="relative mx-auto flex h-full max-w-[1920px] flex-col justify-end px-4 pb-16 pt-10 sm:px-10 lg:justify-center lg:px-16 lg:py-10">
+        <h1 className="font-heading text-[2.15rem] leading-[1.05] tracking-wide text-uwa-white sm:text-6xl sm:leading-[1.02] lg:text-7xl">
           <span className="block">{t("titleLine1")}</span>
           <span className="block">{t("titleLine2")}</span>
           <span className="block">{t("titleLine3")}</span>
         </h1>
 
-        <p className="mt-6 max-w-sm text-sm text-uwa-white/70 sm:text-base">
+        <p className="mt-4 max-w-sm text-sm text-uwa-white/70 sm:mt-6 sm:text-base">
           {t("subtitle")}
         </p>
 
@@ -73,7 +70,7 @@ export async function Hero() {
           href={externalLinks.tickets}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-flex w-fit items-center gap-2.5 bg-uwa-red px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark"
+          className="mt-6 inline-flex w-fit items-center gap-2.5 bg-uwa-red px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:mt-8"
         >
           {t("ctaPrimary")}
           <ArrowRightIcon className="h-4 w-4" />
@@ -82,7 +79,7 @@ export async function Hero() {
 
       <SocialRail />
 
-      <p className="absolute bottom-3 left-4 text-[11px] text-uwa-white/40 sm:left-10 lg:left-16">
+      <p className="absolute bottom-3 left-4 right-20 text-[10px] leading-snug text-uwa-white/40 sm:left-10 sm:right-auto sm:text-[11px] lg:left-16">
         {tFooter("rights", { year: new Date().getFullYear() })}
       </p>
     </section>

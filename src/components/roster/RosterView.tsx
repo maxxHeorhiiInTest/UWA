@@ -75,13 +75,13 @@ export function RosterView({ copy }: { copy: Copy }) {
 
   return (
     <section className="relative flex h-full min-h-0 flex-col overflow-hidden bg-uwa-black">
-      <div className="mx-auto flex min-h-0 w-full max-w-[1920px] flex-1 flex-col px-4 pt-8 sm:px-10 lg:px-16 lg:pt-10 lg:pr-24">
-        <h1 className="shrink-0 font-heading text-5xl tracking-wide text-uwa-white sm:text-6xl lg:text-[4.35rem] lg:leading-none">
+      <div className="mx-auto flex min-h-0 w-full max-w-[1920px] flex-1 flex-col px-4 pt-6 sm:px-10 sm:pt-8 lg:px-16 lg:pt-10 lg:pr-24">
+        <h1 className="shrink-0 font-heading text-4xl tracking-wide text-uwa-white sm:text-6xl lg:text-[4.35rem] lg:leading-none">
           {copy.title}
         </h1>
 
-        <div className="mt-8 flex min-h-0 flex-1 flex-col gap-8 lg:mt-10 lg:flex-row lg:items-stretch lg:gap-14">
-          <div className="flex shrink-0 gap-3 overflow-x-auto scrollbar-none lg:w-[14.25rem] lg:flex-col lg:gap-3.5 lg:overflow-visible">
+        <div className="mt-5 flex min-h-0 flex-1 flex-col gap-5 sm:mt-8 sm:gap-8 lg:mt-10 lg:flex-row lg:items-stretch lg:gap-14">
+          <div className="-mx-4 flex shrink-0 gap-2 overflow-x-auto px-4 scrollbar-none sm:mx-0 sm:gap-3 sm:px-0 lg:w-[14.25rem] lg:flex-col lg:gap-3.5 lg:overflow-visible">
             {rosterCategories.map((key) => {
               const active = key === category;
               return (
@@ -89,7 +89,7 @@ export function RosterView({ copy }: { copy: Copy }) {
                   key={key}
                   type="button"
                   onClick={() => setCategory(key)}
-                  className={`shrink-0 rounded-md px-8 py-[1.125rem] text-sm font-medium uppercase tracking-wide transition-colors lg:w-full ${
+                  className={`shrink-0 rounded-md px-4 py-2.5 text-xs font-medium uppercase tracking-wide transition-colors sm:px-8 sm:py-[1.125rem] sm:text-sm lg:w-full ${
                     active
                       ? "bg-uwa-red text-uwa-white"
                       : "border border-[#6d6d6d] text-uwa-white hover:border-uwa-white/70"
@@ -101,9 +101,9 @@ export function RosterView({ copy }: { copy: Copy }) {
             })}
           </div>
 
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pb-10 border-r-0 lg:border-r lg:border-uwa-red/80 lg:pr-10">
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain pb-10 border-r-0 lg:border-r lg:border-uwa-red/80 lg:pr-10">
             {inCategory.length > 0 ? (
-              <ul className="grid grid-cols-3 gap-x-5 gap-y-8 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
+              <ul className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 sm:gap-x-5 sm:gap-y-8 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
                 {inCategory.map((wrestler) => (
                   <li key={wrestler.id}>
                     <button
@@ -112,9 +112,9 @@ export function RosterView({ copy }: { copy: Copy }) {
                         setSelectedId(wrestler.id);
                         setOpenSection(null);
                       }}
-                      className="group flex w-full flex-col items-center gap-2.5 text-center"
+                      className="group flex w-full flex-col items-center gap-2 text-center sm:gap-2.5"
                     >
-                      <span className="relative block aspect-square w-full max-w-[7.5rem] overflow-hidden bg-[#111]">
+                      <span className="relative block aspect-square w-full max-w-none overflow-hidden bg-[#111] sm:max-w-[7.5rem]">
                         {wrestler.photos[0] ? (
                           <Image
                             src={wrestler.photos[0]}
@@ -131,7 +131,7 @@ export function RosterView({ copy }: { copy: Copy }) {
                           </span>
                         )}
                       </span>
-                      <span className="line-clamp-2 max-w-[7.5rem] text-xs leading-snug text-uwa-white/90 group-hover:text-uwa-white">
+                      <span className="line-clamp-2 max-w-full text-[11px] leading-snug text-uwa-white/90 group-hover:text-uwa-white sm:max-w-[7.5rem] sm:text-xs">
                         {pick(wrestler.name, locale)}
                       </span>
                     </button>
@@ -189,7 +189,7 @@ function WrestlerDialog({
   ] as const;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:p-10">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 lg:p-10">
       <button
         type="button"
         aria-label="Close"
@@ -200,9 +200,9 @@ function WrestlerDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="roster-dialog-title"
-        className="relative z-10 grid max-h-[92vh] w-full max-w-6xl overflow-y-auto border border-[#6e6a6b] bg-uwa-black md:grid-cols-[minmax(22rem,32rem)_minmax(0,1fr)]"
+        className="relative z-10 grid max-h-[92dvh] w-full max-w-6xl overflow-hidden overscroll-contain border border-[#6e6a6b] bg-uwa-black md:grid-cols-[minmax(22rem,32rem)_minmax(0,1fr)] md:overflow-y-auto"
       >
-        <div className="relative aspect-[3/4] w-full bg-[#111] md:aspect-auto md:min-h-[36rem]">
+        <div className="relative h-[38vh] w-full bg-[#111] md:h-auto md:min-h-[36rem]">
           {wrestler.photos[0] ? (
             <Image
               src={wrestler.photos[0]}
@@ -214,19 +214,27 @@ function WrestlerDialog({
               sizes="512px"
             />
           ) : null}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/50 bg-black/70 text-3xl leading-none text-uwa-white shadow-lg md:hidden"
+            aria-label="Close"
+          >
+            ×
+          </button>
         </div>
-        <div className="flex flex-col px-6 py-6 md:px-8">
+        <div className="flex min-h-0 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:overflow-visible md:px-8">
           <div className="flex items-start justify-between gap-4">
             <h2
               id="roster-dialog-title"
-              className="font-heading text-3xl uppercase tracking-wide text-uwa-white"
+              className="font-heading text-2xl uppercase tracking-wide text-uwa-white sm:text-3xl"
             >
               {pick(wrestler.name, locale)}
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="text-2xl leading-none text-uwa-white/60 hover:text-uwa-white"
+              className="hidden text-2xl leading-none text-uwa-white/60 hover:text-uwa-white md:block"
               aria-label="Close"
             >
               ×
