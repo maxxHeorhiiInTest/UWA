@@ -196,13 +196,22 @@ function WrestlerDialog({
         onClick={onClose}
         className="absolute inset-0 bg-black/75"
       />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="roster-dialog-title"
-        className="relative z-10 grid max-h-[92dvh] w-full max-w-6xl overflow-hidden overscroll-contain border border-[#6e6a6b] bg-uwa-black md:grid-cols-[minmax(22rem,32rem)_minmax(0,1fr)] md:overflow-y-auto"
-      >
-        <div className="relative h-[38vh] w-full bg-[#111] md:h-auto md:min-h-[36rem]">
+      <div className="relative z-10 min-h-0 w-full max-w-6xl">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-3 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/50 bg-black/70 text-3xl leading-none text-uwa-white shadow-lg md:hidden"
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="roster-dialog-title"
+          className="grid max-h-[92dvh] min-h-0 overflow-y-auto overscroll-contain border border-[#6e6a6b] bg-uwa-black md:grid-cols-[minmax(22rem,32rem)_minmax(0,1fr)]"
+        >
+        <div className="relative h-[38vh] w-full shrink-0 bg-[#111] md:h-auto md:min-h-[36rem]">
           {wrestler.photos[0] ? (
             <Image
               src={wrestler.photos[0]}
@@ -214,16 +223,8 @@ function WrestlerDialog({
               sizes="512px"
             />
           ) : null}
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-3 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/50 bg-black/70 text-3xl leading-none text-uwa-white shadow-lg md:hidden"
-            aria-label="Close"
-          >
-            ×
-          </button>
         </div>
-        <div className="flex min-h-0 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:overflow-visible md:px-8">
+        <div className="flex flex-col px-4 py-4 sm:px-6 sm:py-6 md:px-8">
           <div className="flex items-start justify-between gap-4">
             <h2
               id="roster-dialog-title"
@@ -284,6 +285,7 @@ function WrestlerDialog({
               })}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
