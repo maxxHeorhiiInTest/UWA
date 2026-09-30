@@ -2,6 +2,9 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RosterView } from "@/components/roster/RosterView";
 import type { RosterCategory } from "@/config/roster";
+import { getWrestlers } from "@/lib/roster-store";
+
+export const dynamic = "force-dynamic";
 
 export default async function RosterPage({
   params,
@@ -11,6 +14,7 @@ export default async function RosterPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("rosterPage");
+  const wrestlers = await getWrestlers();
 
   const categories = {
     men: t("categories.men"),
@@ -35,6 +39,7 @@ export default async function RosterPage({
         },
         photoSoon: t("photoSoon"),
       }}
+      wrestlers={wrestlers}
     />
   );
 }

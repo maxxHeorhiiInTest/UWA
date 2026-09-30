@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import {
   rosterCategories,
-  wrestlers,
   type LocalizedText,
   type RosterCategory,
   type Wrestler,
+  type WrestlerVideo,
 } from "@/config/roster";
+import { getVideoEmbed } from "@/lib/video";
 import { SocialRail } from "@/components/layout/SocialRail";
 import { ChevronDownIcon } from "@/components/ui/Icons";
 
@@ -39,7 +40,13 @@ function sortByLocalizedName(list: Wrestler[], locale: string) {
   );
 }
 
-export function RosterView({ copy }: { copy: Copy }) {
+export function RosterView({
+  copy,
+  wrestlers,
+}: {
+  copy: Copy;
+  wrestlers: Wrestler[];
+}) {
   const locale = useLocale();
   const [category, setCategory] = useState<RosterCategory>("men");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -180,7 +187,6 @@ function WrestlerDialog({
   const sections = [
     { key: "titles", label: copy.sections.titles, items: wrestler.titles },
     { key: "matches", label: copy.sections.matches, items: wrestler.matches },
-    { key: "videos", label: copy.sections.videos, items: wrestler.videos },
     {
       key: "rivalries",
       label: copy.sections.rivalries,
@@ -257,31 +263,47 @@ function WrestlerDialog({
           {wrestler.category !== "managers" &&
             wrestler.category !== "referees" && (
             <div className="mt-8">
-              {sections.map((section) => {
+              {sections.slice(0, 2).map((section) => {
                 const open = openSection === section.key;
                 return (
-                  <div key={section.key} className="border-t border-uwa-white/15">
-                    <button
-                      type="button"
-                      onClick={() => onToggle(open ? null : section.key)}
-                      className="flex w-full items-center justify-between py-3.5 text-left text-sm font-medium uppercase tracking-wide text-uwa-white"
-                      aria-expanded={open}
-                    >
-                      {section.label}
-                      <ChevronDownIcon
-                        className={`h-4 w-4 text-uwa-white/70 transition-transform ${
-                          open ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    {open && (
-                      <ul className="space-y-2 pb-4 text-sm text-uwa-white/55">
-                        {section.items.map((item) => (
-                          <li key={item.en}>{pick(item, locale)}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+                  <AccordionSection
+                    key={section.key}
+                    label={section.label}
+                    open={open}
+                    onToggle={() => onToggle(open ? null : section.key)}
+                  >
+                    <ul className="space-y-2 pb-4 text-sm text-uwa-white/55">
+                      {section.items.map((item) => (
+                        <li key={item.en}>{pick(item, locale)}</li>
+                      ))}
+                    </ul>
+                  </AccordionSection>
+                );
+              })}
+              <VideoSection
+                label={copy.sections.videos}
+                videos={wrestler.videos}
+                locale={locale}
+                open={openSection === "videos"}
+                onToggle={() =>
+                  onToggle(openSection === "videos" ? null : "videos")
+                }
+              />
+              {sections.slice(2).map((section) => {
+                const open = openSection === section.key;
+                return (
+                  <AccordionSection
+                    key={section.key}
+                    label={section.label}
+                    open={open}
+                    onToggle={() => onToggle(open ? null : section.key)}
+                  >
+                    <ul className="space-y-2 pb-4 text-sm text-uwa-white/55">
+                      {section.items.map((item) => (
+                        <li key={item.en}>{pick(item, locale)}</li>
+                      ))}
+                    </ul>
+                  </AccordionSection>
                 );
               })}
             </div>
@@ -290,5 +312,107 @@ function WrestlerDialog({
         </div>
       </div>
     </div>
+  );
+}
+
+function AccordionSection({
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="border-t border-uwa-white/15">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between py-3.5 text-left text-sm font-medium uppercase tracking-wide text-uwa-white"
+        aria-expanded={open}
+      >
+        {label}
+        <ChevronDownIcon
+          className={`h-4 w-4 text-uwa-white/70 transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {open ? children : null}
+    </div>
+  );
+}
+
+function VideoSection({
+  label,
+  videos,
+  locale,
+  open,
+  onToggle,
+}: {
+  label: string;
+  videos: WrestlerVideo[];
+  locale: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <AccordionSection label={label} open={open} onToggle={onToggle}>
+      <ul className="space-y-4 pb-4 text-sm text-uwa-white/55">
+        {videos.map((item, index) => {
+          const caption = pick(item, locale);
+          const embed = getVideoEmbed(item.url);
+          return (
+            <li key={`${item.url}-${item.en}-${index}`} className="space-y-2">
+              {embed?.type === "youtube" ? (
+                <div className="aspect-video overflow-hidden bg-black">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${embed.id}`}
+                    title={caption || "YouTube"}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="h-full w-full"
+                  />
+                </div>
+              ) : null}
+              {embed?.type === "vimeo" ? (
+                <div className="aspect-video overflow-hidden bg-black">
+                  <iframe
+                    src={`https://player.vimeo.com/video/${embed.id}`}
+                    title={caption || "Vimeo"}
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="h-full w-full"
+                  />
+                </div>
+              ) : null}
+              {embed?.type === "file" ? (
+                <video
+                  src={embed.src}
+                  controls
+                  playsInline
+                  className="w-full bg-black"
+                />
+              ) : null}
+              {embed?.type === "link" ? (
+                <a
+                  href={embed.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-uwa-red underline-offset-2 hover:underline"
+                >
+                  {caption || embed.href}
+                </a>
+              ) : null}
+              {caption && embed?.type !== "link" ? <p>{caption}</p> : null}
+              {!embed && caption ? <p>{caption}</p> : null}
+            </li>
+          );
+        })}
+      </ul>
+    </AccordionSection>
   );
 }

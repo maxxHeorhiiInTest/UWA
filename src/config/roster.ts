@@ -12,6 +12,8 @@ export type RosterCategory = (typeof rosterCategories)[number];
 
 export type LocalizedText = { ua: string; en: string };
 
+export type WrestlerVideo = LocalizedText & { url: string };
+
 export type Wrestler = {
   id: string;
   category: RosterCategory;
@@ -21,7 +23,7 @@ export type Wrestler = {
   photos: string[];
   titles: LocalizedText[];
   matches: LocalizedText[];
-  videos: LocalizedText[];
+  videos: WrestlerVideo[];
   rivalries: LocalizedText[];
 };
 
@@ -71,7 +73,7 @@ function placeholder(
       { ua: "Матч — плейсхолдер", en: "Match — placeholder" },
     ],
     videos: [
-      { ua: "Відео — плейсхолдер", en: "Video — placeholder" },
+      { ua: "Відео — плейсхолдер", en: "Video — placeholder", url: "" },
     ],
     rivalries: [
       { ua: "Суперництво — плейсхолдер", en: "Rivalry — placeholder" },
@@ -79,7 +81,7 @@ function placeholder(
   };
 }
 
-export const wrestlers: Wrestler[] = [
+export const seedWrestlers: Wrestler[] = [
   placeholder("arsen-robben", "men", { ua: "Арсен Роббен", en: "Arsen Robben" }, {
     photos: ["/roster/arsen-robben-hq.png"],
     bio: profile(
