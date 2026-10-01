@@ -25,7 +25,10 @@ import {
 import { uniqueId } from "@/lib/slug";
 
 export type AuthState = { error?: string } | undefined;
-export type SaveState = { ok?: boolean; error?: string } | undefined;
+export type SaveState =
+  | { ok: true; savedAt: number; id?: string; created?: boolean }
+  | { error: string }
+  | undefined;
 
 export async function loginAction(_state: AuthState, formData: FormData) {
   const username = String(formData.get("username") ?? "");
@@ -82,24 +85,35 @@ function revalidateRoster() {
   revalidatePath("/admin", "layout");
 }
 
-export async function createWrestlerAction(formData: FormData) {
+export async function createWrestlerAction(
+  _prev: SaveState,
+  formData: FormData
+): Promise<SaveState> {
   await requireAdmin();
   const nameUa = String(formData.get("nameUa") ?? "").trim();
   const nameEn = String(formData.get("nameEn") ?? "").trim();
   if (!nameUa && !nameEn) {
-    throw new Error("Name is required");
+    return { error: "Потрібне ім’я." };
   }
-  const category = asCategory(String(formData.get("category") ?? "men"));
-  const wrestlers = await getWrestlers();
-  const id = uniqueId(nameEn || nameUa, new Set(wrestlers.map((item) => item.id)));
-  const created = newWrestler({
-    id,
-    category,
-    name: { ua: nameUa || nameEn, en: nameEn || nameUa },
-  });
-  await saveWrestler(created);
-  revalidateRoster();
-  redirect(`/admin/${id}`);
+  try {
+    const category = asCategory(String(formData.get("category") ?? "men"));
+    const wrestlers = await getWrestlers();
+    const id = uniqueId(
+      nameEn || nameUa,
+      new Set(wrestlers.map((item) => item.id))
+    );
+    const created = newWrestler({
+      id,
+      category,
+      name: { ua: nameUa || nameEn, en: nameEn || nameUa },
+    });
+    await saveWrestler(created);
+    revalidateRoster();
+    return { ok: true, savedAt: Date.now(), id, created: true };
+  } catch (error) {
+    console.error("Failed to create wrestler", error);
+    return { error: "Не вдалося створити картку." };
+  }
 }
 
 export async function saveWrestlerAction(
@@ -141,7 +155,7 @@ export async function saveWrestlerAction(
 
     await saveWrestler(next, previousId);
     revalidateRoster();
-    return { ok: true };
+    return { ok: true, savedAt: Date.now() };
   } catch (error) {
     console.error("Failed to save wrestler", error);
     return { error: "Не вдалося зберегти. Спробуйте ще раз." };

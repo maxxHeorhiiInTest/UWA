@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import {
@@ -11,6 +11,8 @@ import {
   type WrestlerVideo,
 } from "@/config/roster";
 import { deleteWrestlerAction, saveWrestlerAction } from "@/app/admin/actions";
+import { AdminSaveNotice } from "@/components/admin/AdminSaveNotice";
+import { getVideoEmbed } from "@/lib/video";
 
 const categoryLabel: Record<RosterCategory, string> = {
   men: "Чоловіки",
@@ -32,6 +34,52 @@ function SaveButton() {
     >
       {pending ? "Збереження…" : "Зберегти"}
     </button>
+  );
+}
+
+function VideoPreview({ url }: { url: string }) {
+  const embed = getVideoEmbed(url);
+  if (!embed) return null;
+  if (embed.type === "youtube") {
+    return (
+      <div className="aspect-video overflow-hidden bg-black">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${embed.id}`}
+          title="YouTube"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="h-full w-full"
+        />
+      </div>
+    );
+  }
+  if (embed.type === "vimeo") {
+    return (
+      <div className="aspect-video overflow-hidden bg-black">
+        <iframe
+          src={`https://player.vimeo.com/video/${embed.id}`}
+          title="Vimeo"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          className="h-full w-full"
+        />
+      </div>
+    );
+  }
+  if (embed.type === "file") {
+    return (
+      <video src={embed.src} controls playsInline className="w-full bg-black" />
+    );
+  }
+  return (
+    <a
+      href={embed.href}
+      target="_blank"
+      rel="noreferrer"
+      className="text-xs text-uwa-red underline-offset-2 hover:underline"
+    >
+      {embed.href}
+    </a>
   );
 }
 
@@ -193,6 +241,7 @@ function VideoListEditor({
               onChange(next);
             }}
           />
+          {item.url ? <VideoPreview url={item.url} /> : null}
           <label className="block text-xs text-uwa-white/50">
             <span className="mb-1.5 block uppercase tracking-wide">
               {uploading === index ? "Завантаження…" : "Або файл"}
@@ -257,6 +306,7 @@ function VideoListEditor({
 
 export function AdminWrestlerForm({ wrestler }: { wrestler: Wrestler }) {
   const [state, formAction] = useActionState(saveWrestlerAction, undefined);
+  const [notice, setNotice] = useState<"ok" | "error" | null>(null);
   const [bio, setBio] = useState(
     wrestler.bio.length > 0 ? wrestler.bio : [emptyLine()]
   );
@@ -266,14 +316,24 @@ export function AdminWrestlerForm({ wrestler }: { wrestler: Wrestler }) {
   const [rivalries, setRivalries] = useState(wrestler.rivalries);
   const [photos, setPhotos] = useState(wrestler.photos);
 
+  useEffect(() => {
+    if (state && "ok" in state && state.ok) setNotice("ok");
+    else if (state && "error" in state && state.error) setNotice("error");
+  }, [state]);
+
   return (
     <form action={formAction} className="space-y-8">
-      {state?.ok ? (
-        <p className="text-sm text-uwa-white/70">Збережено.</p>
-      ) : null}
-      {state?.error ? (
-        <p className="text-sm text-uwa-red">{state.error}</p>
-      ) : null}
+      <AdminSaveNotice
+        open={notice !== null}
+        title="Збережено"
+        message="Зміни в картці збережено і вже мають бути на сайті."
+        error={
+          notice === "error" && state && "error" in state
+            ? state.error
+            : undefined
+        }
+        onClose={() => setNotice(null)}
+      />
       <input type="hidden" name="id" value={wrestler.id} />
       {photos.map((src) => (
         <input key={src} type="hidden" name="keepPhoto" value={src} />
