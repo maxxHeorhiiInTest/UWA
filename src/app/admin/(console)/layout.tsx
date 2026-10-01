@@ -2,6 +2,8 @@ import { Logo } from "@/components/ui/Logo";
 import { requireAdmin } from "@/lib/auth";
 import { logoutAction } from "../actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminConsoleLayout({
   children,
 }: {

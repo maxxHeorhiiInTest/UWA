@@ -9,10 +9,13 @@ export const dynamic = "force-dynamic";
 
 export default async function EditWrestlerPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
 }) {
   const { id } = await params;
+  const { saved } = await searchParams;
   const wrestler = await getWrestler(id);
   if (!wrestler) notFound();
 
@@ -27,7 +30,10 @@ export default async function EditWrestlerPage({
         </div>
         <DeleteWrestlerButton id={wrestler.id} name={wrestler.name.ua} />
       </div>
-      <AdminWrestlerForm wrestler={wrestler} />
+      {saved ? (
+        <p className="mb-6 text-sm text-uwa-white/70">Збережено.</p>
+      ) : null}
+      <AdminWrestlerForm key={`${wrestler.id}-${wrestler.category}`} wrestler={wrestler} />
     </div>
   );
 }

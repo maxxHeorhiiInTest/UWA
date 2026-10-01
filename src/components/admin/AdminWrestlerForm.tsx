@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import {
   rosterCategories,
@@ -20,6 +21,19 @@ const categoryLabel: Record<RosterCategory, string> = {
   referees: "Судді",
   alumni: "Alumni",
 };
+
+function SaveButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="bg-uwa-red px-6 py-3 text-sm font-bold uppercase tracking-wide text-uwa-white hover:bg-uwa-red-dark disabled:opacity-60"
+    >
+      {pending ? "Збереження…" : "Зберегти"}
+    </button>
+  );
+}
 
 function emptyLine(): LocalizedText {
   return { ua: "", en: "" };
@@ -369,12 +383,7 @@ export function AdminWrestlerForm({ wrestler }: { wrestler: Wrestler }) {
         )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="submit"
-          className="bg-uwa-red px-6 py-3 text-sm font-bold uppercase tracking-wide text-uwa-white hover:bg-uwa-red-dark"
-        >
-          Зберегти
-        </button>
+        <SaveButton />
         <a
           href="/admin"
           className="px-4 py-3 text-sm uppercase tracking-wide text-uwa-white/50 hover:text-uwa-white"

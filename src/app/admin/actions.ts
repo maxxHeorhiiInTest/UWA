@@ -134,7 +134,7 @@ export async function saveWrestlerAction(formData: FormData) {
 
   await saveWrestler(next, previousId);
   revalidateRoster();
-  revalidatePath(`/admin/${previousId}`);
+  redirect(`/admin/${previousId}?saved=1`);
 }
 
 export async function deleteWrestlerAction(formData: FormData) {

@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { BlobNotFoundError, get, put } from "@vercel/blob";
+import { BlobNotFoundError, get, put, type BlobAccessType } from "@vercel/blob";
 import {
   rosterCategories,
   seedWrestlers,
@@ -111,30 +111,27 @@ async function readStoreFile(): Promise<Wrestler[] | null> {
   }
 }
 
-async function readBlobStore(): Promise<Wrestler[] | null> {
+async function readBlobBody(access: BlobAccessType): Promise<string | null> {
   try {
     const result = await get(ROSTER_BLOB_PATH, {
-      access: "public",
+      access,
       useCache: false,
       ...blobAuth(),
     });
-    if (!result) return null;
-    const blobUrl = result.blob?.url;
-    const raw = blobUrl
-      ? await (
-          await fetch(`${blobUrl.split("?")[0]}?v=${Date.now()}`, {
-            cache: "no-store",
-          })
-        ).text()
-      : result.stream
-        ? await new Response(result.stream).text()
-        : null;
-    if (!raw) return null;
-    return parseWrestlers(raw);
+    if (!result?.stream || result.statusCode !== 200) return null;
+    return await new Response(result.stream).text();
   } catch (error) {
     if (error instanceof BlobNotFoundError) return null;
+    if (access === "private") return null;
     throw error;
   }
+}
+
+async function readBlobStore(): Promise<Wrestler[] | null> {
+  const raw =
+    (await readBlobBody("private")) ?? (await readBlobBody("public"));
+  if (!raw) return null;
+  return parseWrestlers(raw);
 }
 
 export async function getWrestlers(): Promise<Wrestler[]> {
@@ -142,11 +139,10 @@ export async function getWrestlers(): Promise<Wrestler[]> {
     return structuredClone(lastWrite.wrestlers);
   }
   if (blobEnabled()) {
-    try {
-      const stored = await readBlobStore();
-      if (stored) return stored;
-    } catch (error) {
-      console.error("Failed to read roster from Vercel Blob", error);
+    const stored = await readBlobStore();
+    if (stored) return stored;
+    if (process.env.VERCEL) {
+      throw new Error("Failed to read roster from Vercel Blob.");
     }
   }
   const stored = await readStoreFile();
@@ -163,10 +159,9 @@ async function writeWrestlers(wrestlers: Wrestler[]) {
   const payload = `${JSON.stringify(wrestlers, null, 2)}\n`;
   if (blobEnabled()) {
     await put(ROSTER_BLOB_PATH, payload, {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
       allowOverwrite: true,
-      cacheControlMaxAge: 60,
       contentType: "application/json; charset=utf-8",
       ...blobAuth(),
     });
