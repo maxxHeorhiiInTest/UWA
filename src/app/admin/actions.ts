@@ -25,6 +25,7 @@ import {
 import { uniqueId } from "@/lib/slug";
 
 export type AuthState = { error?: string } | undefined;
+export type SaveState = { ok?: boolean; error?: string } | undefined;
 
 export async function loginAction(_state: AuthState, formData: FormData) {
   const username = String(formData.get("username") ?? "");
@@ -74,9 +75,11 @@ function asCategory(value: string): RosterCategory {
 }
 
 function revalidateRoster() {
-  revalidatePath("/ua/roster");
-  revalidatePath("/en/roster");
-  revalidatePath("/admin");
+  revalidatePath("/", "layout");
+  revalidatePath("/[locale]/roster", "page");
+  revalidatePath("/ua/roster", "page");
+  revalidatePath("/en/roster", "page");
+  revalidatePath("/admin", "layout");
 }
 
 export async function createWrestlerAction(formData: FormData) {
@@ -99,42 +102,50 @@ export async function createWrestlerAction(formData: FormData) {
   redirect(`/admin/${id}`);
 }
 
-export async function saveWrestlerAction(formData: FormData) {
+export async function saveWrestlerAction(
+  _prev: SaveState,
+  formData: FormData
+): Promise<SaveState> {
   await requireAdmin();
   const previousId = String(formData.get("id") ?? "");
-  if (!previousId) throw new Error("Missing wrestler id");
+  if (!previousId) return { error: "Немає id картки." };
 
-  const nameUa = String(formData.get("nameUa") ?? "").trim();
-  const nameEn = String(formData.get("nameEn") ?? "").trim();
-  const category = asCategory(String(formData.get("category") ?? "men"));
-  const keepPhotos = formData
-    .getAll("keepPhoto")
-    .map((item) => String(item))
-    .filter(Boolean);
+  try {
+    const nameUa = String(formData.get("nameUa") ?? "").trim();
+    const nameEn = String(formData.get("nameEn") ?? "").trim();
+    const category = asCategory(String(formData.get("category") ?? "men"));
+    const keepPhotos = formData
+      .getAll("keepPhoto")
+      .map((item) => String(item))
+      .filter(Boolean);
 
-  const photos = [...keepPhotos];
-  const uploads = formData.getAll("photos").filter((item): item is File => {
-    return item instanceof File && item.size > 0;
-  });
-  for (const file of uploads) {
-    photos.push(await savePhoto(previousId, file));
+    const photos = [...keepPhotos];
+    const uploads = formData.getAll("photos").filter((item): item is File => {
+      return item instanceof File && item.size > 0;
+    });
+    for (const file of uploads) {
+      photos.push(await savePhoto(previousId, file));
+    }
+
+    const next = {
+      id: previousId,
+      category,
+      name: { ua: nameUa || nameEn, en: nameEn || nameUa },
+      bio: readList(formData, "bio"),
+      photos,
+      titles: readList(formData, "titles"),
+      matches: readList(formData, "matches"),
+      videos: readVideos(formData),
+      rivalries: readList(formData, "rivalries"),
+    };
+
+    await saveWrestler(next, previousId);
+    revalidateRoster();
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to save wrestler", error);
+    return { error: "Не вдалося зберегти. Спробуйте ще раз." };
   }
-
-  const next = {
-    id: previousId,
-    category,
-    name: { ua: nameUa || nameEn, en: nameEn || nameUa },
-    bio: readList(formData, "bio"),
-    photos,
-    titles: readList(formData, "titles"),
-    matches: readList(formData, "matches"),
-    videos: readVideos(formData),
-    rivalries: readList(formData, "rivalries"),
-  };
-
-  await saveWrestler(next, previousId);
-  revalidateRoster();
-  redirect(`/admin/${previousId}?saved=1`);
 }
 
 export async function deleteWrestlerAction(formData: FormData) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import {
@@ -256,6 +256,7 @@ function VideoListEditor({
 }
 
 export function AdminWrestlerForm({ wrestler }: { wrestler: Wrestler }) {
+  const [state, formAction] = useActionState(saveWrestlerAction, undefined);
   const [bio, setBio] = useState(
     wrestler.bio.length > 0 ? wrestler.bio : [emptyLine()]
   );
@@ -266,7 +267,13 @@ export function AdminWrestlerForm({ wrestler }: { wrestler: Wrestler }) {
   const [photos, setPhotos] = useState(wrestler.photos);
 
   return (
-    <form action={saveWrestlerAction} className="space-y-8">
+    <form action={formAction} className="space-y-8">
+      {state?.ok ? (
+        <p className="text-sm text-uwa-white/70">Збережено.</p>
+      ) : null}
+      {state?.error ? (
+        <p className="text-sm text-uwa-red">{state.error}</p>
+      ) : null}
       <input type="hidden" name="id" value={wrestler.id} />
       {photos.map((src) => (
         <input key={src} type="hidden" name="keepPhoto" value={src} />

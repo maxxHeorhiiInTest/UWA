@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { BlobNotFoundError, get, put, type BlobAccessType } from "@vercel/blob";
+import { connection } from "next/server";
+import { BlobNotFoundError, get, list, put } from "@vercel/blob";
 import {
   rosterCategories,
   seedWrestlers,
@@ -14,7 +15,8 @@ import { normalizeVideoUrl } from "@/lib/video";
 const STORE_PATH = path.join(process.cwd(), "data", "roster.json");
 const PHOTO_DIR = path.join(process.cwd(), "public", "roster");
 const ROSTER_BLOB_PATH = "data/roster.json";
-const WRITE_CACHE_MS = 15_000;
+const ROSTER_VERSION_PREFIX = "data/roster-versions/";
+const WRITE_CACHE_MS = 60_000;
 
 let lastWrite: { wrestlers: Wrestler[]; at: number } | null = null;
 
@@ -111,10 +113,10 @@ async function readStoreFile(): Promise<Wrestler[] | null> {
   }
 }
 
-async function readBlobBody(access: BlobAccessType): Promise<string | null> {
+async function readBlobPath(pathname: string): Promise<string | null> {
   try {
-    const result = await get(ROSTER_BLOB_PATH, {
-      access,
+    const result = await get(pathname, {
+      access: "public",
       useCache: false,
       ...blobAuth(),
     });
@@ -122,29 +124,52 @@ async function readBlobBody(access: BlobAccessType): Promise<string | null> {
     return await new Response(result.stream).text();
   } catch (error) {
     if (error instanceof BlobNotFoundError) return null;
-    if (access === "private") return null;
-    throw error;
+    return null;
+  }
+}
+
+async function readLatestVersion(): Promise<Wrestler[] | null> {
+  try {
+    const listed = await list({
+      prefix: ROSTER_VERSION_PREFIX,
+      limit: 1000,
+      ...blobAuth(),
+    });
+    const latest = [...listed.blobs].sort((a, b) =>
+      b.pathname.localeCompare(a.pathname)
+    )[0];
+    if (!latest) return null;
+    const raw = await readBlobPath(latest.pathname);
+    return raw ? parseWrestlers(raw) : null;
+  } catch {
+    return null;
   }
 }
 
 async function readBlobStore(): Promise<Wrestler[] | null> {
-  const raw =
-    (await readBlobBody("private")) ?? (await readBlobBody("public"));
-  if (!raw) return null;
-  return parseWrestlers(raw);
+  const versioned = await readLatestVersion();
+  if (versioned) return versioned;
+  const raw = await readBlobPath(ROSTER_BLOB_PATH);
+  return raw ? parseWrestlers(raw) : null;
 }
 
 export async function getWrestlers(): Promise<Wrestler[]> {
+  try {
+    await connection();
+  } catch {
+    // Outside a request, skip.
+  }
   if (lastWrite && Date.now() - lastWrite.at < WRITE_CACHE_MS) {
     return structuredClone(lastWrite.wrestlers);
   }
   if (blobEnabled()) {
     const stored = await readBlobStore();
-    if (stored) return stored;
-    if (process.env.VERCEL) {
-      throw new Error("Failed to read roster from Vercel Blob.");
+    if (stored) {
+      lastWrite = { wrestlers: structuredClone(stored), at: Date.now() };
+      return stored;
     }
   }
+  if (lastWrite) return structuredClone(lastWrite.wrestlers);
   const stored = await readStoreFile();
   return structuredClone(stored ?? seedWrestlers);
 }
@@ -158,8 +183,15 @@ async function writeWrestlers(wrestlers: Wrestler[]) {
   lastWrite = { wrestlers: structuredClone(wrestlers), at: Date.now() };
   const payload = `${JSON.stringify(wrestlers, null, 2)}\n`;
   if (blobEnabled()) {
+    const versionPath = `${ROSTER_VERSION_PREFIX}${Date.now()}.json`;
+    await put(versionPath, payload, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: "application/json; charset=utf-8",
+      ...blobAuth(),
+    });
     await put(ROSTER_BLOB_PATH, payload, {
-      access: "private",
+      access: "public",
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: "application/json; charset=utf-8",
