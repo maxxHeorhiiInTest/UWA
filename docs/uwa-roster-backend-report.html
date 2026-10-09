@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <title>UWA — збереження ростера: зараз і на бойовому домені</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #111;
+      font: 11.5pt/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    h1 {
+      font-size: 20pt;
+      line-height: 1.25;
+      margin: 0 0 8pt;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 13.5pt;
+      margin: 20pt 0 8pt;
+      padding-bottom: 4pt;
+      border-bottom: 1px solid #ccc;
+      font-weight: 700;
+    }
+    h3 {
+      font-size: 11.5pt;
+      margin: 14pt 0 6pt;
+      font-weight: 700;
+    }
+    p { margin: 0 0 8pt; }
+    .meta {
+      color: #555;
+      font-size: 9.5pt;
+      margin-bottom: 14pt;
+    }
+    .kicker {
+      font-size: 9pt;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 6pt;
+    }
+    .callout {
+      border: 1px solid #bbb;
+      padding: 10pt 12pt;
+      margin: 12pt 0;
+    }
+    .callout strong { display: block; margin-bottom: 4pt; }
+    .stats {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10pt 0 14pt;
+    }
+    .stats td {
+      width: 33.33%;
+      border: 1px solid #ccc;
+      padding: 8pt 10pt;
+      vertical-align: top;
+    }
+    .stats .v { font-size: 12pt; font-weight: 700; margin-bottom: 2pt; }
+    .stats .l { font-size: 9pt; color: #555; }
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.6pt;
+      margin: 6pt 0 8pt;
+    }
+    table.data th,
+    table.data td {
+      border: 1px solid #ccc;
+      padding: 6pt 7pt;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.data th {
+      background: #f3f3f3;
+      font-weight: 700;
+    }
+    table.data td:first-child { width: 22%; font-weight: 600; }
+    ol, ul { margin: 0 0 8pt; padding-left: 18pt; }
+    li { margin-bottom: 4pt; }
+    .cols { display: table; width: 100%; margin: 6pt 0 10pt; }
+    .col { display: table-cell; width: 50%; vertical-align: top; padding-right: 10pt; }
+    .col + .col { padding-right: 0; padding-left: 10pt; }
+    .box {
+      border: 1px solid #ccc;
+      padding: 8pt 10pt;
+      margin-bottom: 8pt;
+    }
+    .box h3 { margin-top: 0; }
+    .foot {
+      margin-top: 18pt;
+      font-size: 8.5pt;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="kicker">UWA · внутрішній звіт · збереження ростера</div>
+  <h1>Як зараз зберігаються зміни і що зміниться на бойовому домені</h1>
+  <p class="meta">
+    Короткий опис бекенду адмінки для команди. Зараз сайт живе на Vercel без окремої бази.
+    На реальному домені ростер має піти в MongoDB (або аналог). Звіт фіксує обидва етапи
+    і що між ними не ламається.
+  </p>
+
+  <table class="stats">
+    <tr>
+      <td><div class="v">Зараз</div><div class="l">Vercel Blob + Server Actions</div></td>
+      <td><div class="v">Далі</div><div class="l">MongoDB + той самий /admin</div></td>
+      <td><div class="v">Без змін</div><div class="l">Форми, логін, публічний ростер</div></td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>Головне для рішення</strong>
+    Поточна схема нормальна для прев’ю і запуску на vercel.app. На власному домені
+    з кількома редакторами, бекапами і ростом контенту потрібна справжня БД.
+    Файли фото/відео можуть лишитися в Blob — міняється сховище карток, не весь сайт.
+  </div>
+
+  <h2>Порівняння</h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Зараз (Vercel)</th>
+        <th>На реальному домені</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Де лежать картки</td>
+        <td>JSON у Vercel Blob (версії + data/roster.json)</td>
+        <td>Колекція wrestlers у MongoDB Atlas (або аналог)</td>
+      </tr>
+      <tr>
+        <td>Як пише адмінка</td>
+        <td>Server Action читає весь список, підміняє картку, пише JSON цілком</td>
+        <td>Той самий Server Action, але updateOne / insertOne однієї картки</td>
+      </tr>
+      <tr>
+        <td>Як читає сайт</td>
+        <td>getWrestlers() з Blob, сторінки force-dynamic</td>
+        <td>getWrestlers() з Mongo, ті самі /ua/roster і /en/roster</td>
+      </tr>
+      <tr>
+        <td>Фото</td>
+        <td>Публічний Blob, URL у картці</td>
+        <td>Те саме або CDN; у БД лише URL</td>
+      </tr>
+      <tr>
+        <td>Відеофайл</td>
+        <td>Браузер → /api/admin/video → Blob, у картці URL</td>
+        <td>Той самий аплоад; у БД лише URL</td>
+      </tr>
+      <tr>
+        <td>Логін</td>
+        <td>ADMIN_USERNAME / PASSWORD, кука uwa_admin (HMAC, 7 днів)</td>
+        <td>Та сама кука або юзери в Mongo; секрет лишається в env</td>
+      </tr>
+      <tr>
+        <td>Конфлікти правок</td>
+        <td>Останній сейв перезаписує весь файл</td>
+        <td>Одна картка, без затирання чужих правок</td>
+      </tr>
+      <tr>
+        <td>Бекап / відкат</td>
+        <td>Файли data/roster-versions/{time}.json</td>
+        <td>Бекапи Atlas, історія змін за бажанням</td>
+      </tr>
+      <tr>
+        <td>Локальна розробка</td>
+        <td>Без Blob — data/roster.json на диску</td>
+        <td>Локальний Mongo або Atlas dev-кластер</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="meta">Джерело: поточний код UWA (roster-store, admin/actions, auth, Blob store uwa-roster). Цільова схема — запланована, ще не в коді.</p>
+
+  <h2>Як працює зараз</h2>
+  <div class="cols">
+    <div class="col">
+      <div class="box">
+        <h3>Потік збереження</h3>
+        <ol>
+          <li>Редактор логіниться на /admin/login. Сервер звіряє логін і пароль з env і ставить httpOnly-куку uwa_admin.</li>
+          <li>Форма картки йде Server Action. Сервер ще раз перевіряє підпис куки (AUTH_SECRET). Без сесії правки не пишуться.</li>
+          <li>З форми збирається повна картка: імена UA/EN, категорія, біо, титули, матчі, відео, суперництва, фото.</li>
+          <li>Читається весь ростер, картка замінюється або додається, JSON пишеться в Blob двічі: нова версія і data/roster.json.</li>
+          <li>Скидається кеш /ua/roster, /en/roster і адмінки. У UI — попап «Збережено».</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="box">
+        <h3>Чому саме так</h3>
+        <p>На Vercel немає постійного диска. Файл у репозиторії після деплою тільки для читання, тому живі правки йдуть у Blob.</p>
+        <p>Весь ростер — один JSON. Це просто і достатньо, поки редактор один і карток десятки, не тисячі.</p>
+        <p>Версійні файли потрібні тому, що перезапис публічного Blob може віддавати старий JSON до ~60 секунд. Новий pathname одразу свіжий.</p>
+      </div>
+      <div class="box">
+        <h3>Медіа окремо від карток</h3>
+        <p>Фото їдуть разом із формою (ліміт тіла ~10 МБ). Відео до 80 МБ грузиться з браузера в Blob, у JSON лише посилання. YouTube / Vimeo — тільки URL, без файлу.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Обмеження поточної схеми</h3>
+  <table class="data">
+    <thead>
+      <tr><th>Обмеження</th><th>Наслідки</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Запис усього JSON</td>
+        <td>Два редактори одночасно можуть затерти правки одне одного</td>
+      </tr>
+      <tr>
+        <td>Немає запитів по полях</td>
+        <td>Немає зручного пошуку, фільтрів і аналітики в БД</td>
+      </tr>
+      <tr>
+        <td>Hobby Blob</td>
+        <td>Ліміти обсягу, операцій і трафіку; не заміна прод-БД</td>
+      </tr>
+      <tr>
+        <td>Секрети в env</td>
+        <td>Один спільний логін адмінки, без ролей і аудиту</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Як буде на реальному домені</h2>
+  <p>
+    Домен (наприклад uwa.ua) вішається на той самий Vercel-проєкт. Адмінка і публічні
+    сторінки лишаються. Міняється шар даних карток: замість JSON у Blob — MongoDB Atlas
+    (або Postgres / аналог).
+  </p>
+
+  <div class="cols">
+    <div class="col">
+      <div class="box">
+        <h3>Не чіпаємо</h3>
+        <ul>
+          <li>/admin, форми карток, попап збереження</li>
+          <li>Публічний ростер /ua і /en, картки, плеєр відео</li>
+          <li>Кука адміна або той самий логін на старті</li>
+          <li>Blob для фото і відеофайлів (або пізніше окремий CDN)</li>
+          <li>Server Actions як єдиний вхід з форми</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="box">
+        <h3>Новий шар даних</h3>
+        <ul>
+          <li>getWrestlers / saveWrestler ходять у Mongo, не в Blob JSON</li>
+          <li>Одна картка = один документ, без перезапису всього списку</li>
+          <li>MONGODB_URI в Vercel Production; кластер окремо від фронту</li>
+          <li>Бекапи і індекси на стороні Atlas</li>
+          <li>Кука прив’язана до бойового домену; логін з vercel.app туди не переїде</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>Цільовий потік</h3>
+  <div class="box">
+    <p>Браузер (https://домен/admin) → Server Action → перевірка сесії → MongoDB (insert / update картки) → invalidate кешу ростера → попап «Збережено».</p>
+    <p>Публічна сторінка → getWrestlers() → find() по колекції → той самий UI ростера.</p>
+    <p>Файл відео як і зараз: браузер → /api/admin/video → Blob → URL у документі картки.</p>
+  </div>
+
+  <h2>Перехід</h2>
+  <table class="data">
+    <thead>
+      <tr><th>Крок</th><th>Що робимо</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1. Кластер</td>
+        <td>Atlas (або self-host), база uwa, колекція wrestlers, URI в env Production / Preview / Dev</td>
+      </tr>
+      <tr>
+        <td>2. Міграція</td>
+        <td>Один раз прочитати поточний Blob JSON і записати документи в Mongo</td>
+      </tr>
+      <tr>
+        <td>3. Код</td>
+        <td>Замінити read/write у roster-store; форми і сторінки не переписувати</td>
+      </tr>
+      <tr>
+        <td>4. Домен</td>
+        <td>HTTPS, той самий проєкт Vercel, логін уже на бойовому хості</td>
+      </tr>
+      <tr>
+        <td>5. Перевірка</td>
+        <td>Сейв картки, нова картка, фото, відео-URL, що /ua/roster збігається з адмінкою</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="foot">UWA · 2026-10-01 · актуальний код на main / Vercel проєкт uwa</p>
+</body>
+</html>
