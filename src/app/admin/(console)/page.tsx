@@ -39,12 +39,20 @@ export default async function AdminRosterPage({
             одразу видно на сайті.
           </p>
         </div>
-        <a
-          href="/admin/new"
-          className="bg-uwa-red px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-uwa-white hover:bg-uwa-red-dark"
-        >
-          Додати картку
-        </a>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href="/admin/show"
+            className="border border-uwa-panel-border px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-uwa-white/80 hover:text-uwa-white"
+          >
+            Поточне шоу
+          </a>
+          <a
+            href="/admin/new"
+            className="bg-uwa-red px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-uwa-white hover:bg-uwa-red-dark"
+          >
+            Додати картку
+          </a>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">

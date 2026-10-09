@@ -1,14 +1,18 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
-import { externalLinks } from "@/config/links";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getSiteSettings } from "@/lib/site-settings-store";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SocialRail } from "@/components/layout/SocialRail";
 
 export async function Hero() {
-  const [t, tFooter] = await Promise.all([
+  const [t, tFooter, locale, settings] = await Promise.all([
     getTranslations("home"),
     getTranslations("footer"),
+    getLocale(),
+    getSiteSettings(),
   ]);
+  const subtitle =
+    locale === "en" ? settings.subtitle.en : settings.subtitle.ua;
 
   return (
     <section className="relative h-full overflow-hidden bg-uwa-black">
@@ -63,11 +67,11 @@ export async function Hero() {
         </h1>
 
         <p className="mt-4 max-w-sm text-sm text-uwa-white/70 sm:mt-6 sm:text-base">
-          {t("subtitle")}
+          {subtitle}
         </p>
 
         <a
-          href={externalLinks.tickets}
+          href={settings.ticketsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-6 inline-flex w-fit items-center gap-2.5 bg-uwa-red px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:mt-8"

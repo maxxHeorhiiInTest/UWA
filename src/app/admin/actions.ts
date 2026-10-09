@@ -22,6 +22,7 @@ import {
   savePhoto,
   saveWrestler,
 } from "@/lib/roster-store";
+import { saveSiteSettings } from "@/lib/site-settings-store";
 import { uniqueId } from "@/lib/slug";
 
 export type AuthState = { error?: string } | undefined;
@@ -83,6 +84,57 @@ function revalidateRoster() {
   revalidatePath("/ua/roster", "page");
   revalidatePath("/en/roster", "page");
   revalidatePath("/admin", "layout");
+}
+
+function revalidateShow() {
+  revalidatePath("/", "layout");
+  revalidatePath("/[locale]", "page");
+  revalidatePath("/ua", "page");
+  revalidatePath("/en", "page");
+  revalidatePath("/admin/show", "page");
+}
+
+function normalizeHttpUrl(raw: string): string | null {
+  const value = raw.trim();
+  if (!value) return null;
+  const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  try {
+    const url = new URL(withProtocol);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveShowAction(
+  _prev: SaveState,
+  formData: FormData
+): Promise<SaveState> {
+  await requireAdmin();
+  const ticketsUrl = normalizeHttpUrl(String(formData.get("ticketsUrl") ?? ""));
+  const subtitleUa = String(formData.get("subtitleUa") ?? "").trim();
+  const subtitleEn = String(formData.get("subtitleEn") ?? "").trim();
+  if (!ticketsUrl) {
+    return { error: "Потрібне коректне посилання на квитки." };
+  }
+  if (!subtitleUa && !subtitleEn) {
+    return { error: "Потрібен текст для головної." };
+  }
+  try {
+    await saveSiteSettings({
+      ticketsUrl,
+      subtitle: {
+        ua: subtitleUa || subtitleEn,
+        en: subtitleEn || subtitleUa,
+      },
+    });
+    revalidateShow();
+    return { ok: true, savedAt: Date.now() };
+  } catch (error) {
+    console.error("Failed to save show settings", error);
+    return { error: "Не вдалося зберегти. Спробуйте ще раз." };
+  }
 }
 
 export async function createWrestlerAction(

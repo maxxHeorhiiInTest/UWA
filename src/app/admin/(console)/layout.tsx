@@ -15,12 +15,28 @@ export default async function AdminConsoleLayout({
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-uwa-black">
       <header className="sticky top-0 z-40 border-b border-uwa-panel-border bg-uwa-black">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <a href="/admin" className="flex items-center gap-3 text-uwa-red">
-            <Logo className="h-7 w-auto" />
-            <span className="text-xs font-bold uppercase tracking-wide text-uwa-white">
-              Адмін
-            </span>
-          </a>
+          <div className="flex items-center gap-4">
+            <a href="/admin" className="flex items-center gap-3 text-uwa-red">
+              <Logo className="h-7 w-auto" />
+              <span className="text-xs font-bold uppercase tracking-wide text-uwa-white">
+                Адмін
+              </span>
+            </a>
+            <nav className="flex items-center gap-3">
+              <a
+                href="/admin"
+                className="text-xs uppercase tracking-wide text-uwa-white/50 hover:text-uwa-white"
+              >
+                Ростер
+              </a>
+              <a
+                href="/admin/show"
+                className="text-xs uppercase tracking-wide text-uwa-white/50 hover:text-uwa-white"
+              >
+                Шоу
+              </a>
+            </nav>
+          </div>
           <div className="flex items-center gap-4">
             <a
               href="/ua/roster"
