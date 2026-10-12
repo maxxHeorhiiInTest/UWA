@@ -51,6 +51,12 @@
       "rivalries": "Related rivalries"
     }
   },
+  "academyPage": {
+    "title": "ACADEMY",
+    "trainers": "TRAINERS",
+    "contacts": "Contacts for enrollment",
+    "play": "Play video"
+  },
   "comingSoon": {
     "badge": "Coming soon",
     "description": "This section is under construction. We're building something spectacular — check back soon!",

@@ -1,7 +1,11 @@
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ComingSoonPage } from "@/components/ui/ComingSoonPage";
-import type { RoadmapNode } from "@/types/roadmap";
+import { AcademyView } from "@/components/academy/AcademyView";
+import { academyTrainers } from "@/config/academy";
+import { getWrestlers } from "@/lib/roster-store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function AcademyPage({
   params,
@@ -10,15 +14,30 @@ export default async function AcademyPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tRoadmap] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("roadmap"),
+  const [t, wrestlers] = await Promise.all([
+    getTranslations("academyPage"),
+    getWrestlers(),
   ]);
 
+  const trainers = academyTrainers.map((trainer) => {
+    const livePhoto = wrestlers.find(
+      (wrestler) => wrestler.id === trainer.wrestlerId
+    )?.photos[0];
+    return {
+      ...trainer,
+      photo: livePhoto || trainer.photo,
+    };
+  });
+
   return (
-    <ComingSoonPage
-      title={t("academy")}
-      roadmap={tRoadmap.raw("academy") as RoadmapNode[]}
+    <AcademyView
+      copy={{
+        title: t("title"),
+        trainers: t("trainers"),
+        contacts: t("contacts"),
+        play: t("play"),
+      }}
+      trainers={trainers}
     />
   );
 }
