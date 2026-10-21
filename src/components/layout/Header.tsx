@@ -38,7 +38,7 @@ export async function Header() {
           items={allItems}
           openLabel={tHeader("menuOpen")}
           closeLabel={tHeader("menuClose")}
-          ticketsHref="/tickets?from=menu"
+          ticketsHref="/tickets"
           ticketsLabel={tHeader("tickets")}
         />
 
@@ -62,13 +62,13 @@ export async function Header() {
           <LocaleSwitcher />
 
           <Link
-            href="/tickets?from=header"
+            href={{ pathname: "/tickets", query: { from: "header" } }}
             className="inline-flex items-center bg-uwa-red px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:hidden"
           >
             {tHeader("tickets")}
           </Link>
           <Link
-            href="/tickets?from=header"
+            href={{ pathname: "/tickets", query: { from: "header" } }}
             className="hidden items-center gap-2 bg-uwa-red px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:inline-flex"
           >
             <TicketBadgeIcon className="h-4 w-4" />

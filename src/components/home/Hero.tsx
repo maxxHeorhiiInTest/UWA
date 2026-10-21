@@ -72,7 +72,7 @@ export async function Hero() {
         </p>
 
         <Link
-          href="/tickets?from=hero"
+          href={{ pathname: "/tickets", query: { from: "hero" } }}
           className="mt-6 inline-flex w-fit items-center gap-2.5 bg-uwa-red px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:mt-8"
         >
           {t("ctaPrimary")}

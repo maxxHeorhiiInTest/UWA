@@ -78,7 +78,7 @@ export function MobileMenu({
             })}
           </nav>
           <Link
-            href={ticketsHref}
+            href={{ pathname: ticketsHref, query: { from: "menu" } }}
             onClick={() => setIsOpen(false)}
             className="mt-6 inline-flex w-full items-center justify-center bg-uwa-red px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white lg:hidden"
           >
