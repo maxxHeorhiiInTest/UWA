@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import type { LocalizedText } from "@/config/roster";
 import {
+  academyCityIds,
   academyContactLinks,
   academyPhone,
   academyPhoneHref,
   academySchedule,
+  type AcademyCityId,
   type AcademyTrainer,
 } from "@/config/academy";
 import { getVideoEmbed } from "@/lib/video";
@@ -26,6 +28,7 @@ type Copy = {
   trainers: string;
   contacts: string;
   play: string;
+  cities: Record<AcademyCityId, string>;
 };
 
 function pick(text: LocalizedText, locale: string) {
@@ -47,10 +50,19 @@ export function AcademyView({
 }) {
   const locale = useLocale();
   const localeKey = locale === "en" ? "en" : "ua";
+  const [cityId, setCityId] = useState<AcademyCityId>(
+    trainers[0]?.cityId ?? "kyiv"
+  );
   const [selectedId, setSelectedId] = useState(trainers[0]?.id ?? "");
   const [playing, setPlaying] = useState(false);
+
+  const cityTrainers = useMemo(
+    () => trainers.filter((trainer) => trainer.cityId === cityId),
+    [cityId, trainers]
+  );
   const selected =
-    trainers.find((trainer) => trainer.id === selectedId) ?? trainers[0];
+    cityTrainers.find((trainer) => trainer.id === selectedId) ??
+    cityTrainers[0];
 
   if (!selected) return null;
 
@@ -60,6 +72,13 @@ export function AcademyView({
     embed?.type === "vimeo" ||
     embed?.type === "file";
 
+  function selectCity(nextCity: AcademyCityId) {
+    const nextTrainer = trainers.find((trainer) => trainer.cityId === nextCity);
+    setCityId(nextCity);
+    setSelectedId(nextTrainer?.id ?? "");
+    setPlaying(false);
+  }
+
   return (
     <section className="relative min-h-full bg-uwa-black">
       <div className="mx-auto flex w-full max-w-[1920px] flex-col px-4 py-8 sm:px-10 sm:py-10 lg:px-16 lg:py-12">
@@ -67,20 +86,42 @@ export function AcademyView({
           <h1 className="font-heading text-5xl tracking-wide text-uwa-white sm:text-7xl lg:text-[5.5rem] lg:leading-none">
             {copy.title}
           </h1>
-          <p className="max-w-md text-sm leading-relaxed text-uwa-white/55 lg:pt-2">
-            {pick(selected.intro, locale)}
-          </p>
+          {selected.intro.ua || selected.intro.en ? (
+            <p className="max-w-md text-sm leading-relaxed text-uwa-white/55 lg:pt-2">
+              {pick(selected.intro, locale)}
+            </p>
+          ) : null}
         </div>
 
         <div className="mt-8 border-t border-uwa-white/15 pt-8 lg:mt-10 lg:pt-10">
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-0">
-            <div className="lg:col-start-1 lg:row-start-1">
+          <div className="grid items-start gap-8 lg:grid-cols-[14.25rem_minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-8">
+            <div className="-mx-4 flex shrink-0 gap-2 overflow-x-auto px-4 scrollbar-none sm:mx-0 sm:gap-3 sm:px-0 lg:col-start-1 lg:row-span-2 lg:flex-col lg:gap-3.5 lg:overflow-visible">
+              {academyCityIds.map((id) => {
+                const active = id === cityId;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => selectCity(id)}
+                    className={`shrink-0 rounded-md px-4 py-2.5 text-xs font-medium uppercase tracking-wide transition-colors sm:px-8 sm:py-[1.125rem] sm:text-sm lg:w-full ${
+                      active
+                        ? "bg-uwa-red text-uwa-white"
+                        : "border border-[#6d6d6d] text-uwa-white hover:border-uwa-white/70"
+                    }`}
+                  >
+                    {copy.cities[id]}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="lg:col-start-2 lg:row-start-1">
               <h2 className="font-heading text-2xl tracking-wide text-uwa-white sm:text-[1.75rem]">
                 {copy.trainers}
               </h2>
 
               <ul className="mt-5 flex gap-5 sm:mt-6 sm:gap-6">
-                {trainers.map((trainer) => {
+                {cityTrainers.map((trainer) => {
                   const active = trainer.id === selected.id;
                   return (
                     <li key={trainer.id}>
@@ -100,6 +141,7 @@ export function AcademyView({
                           }`}
                         >
                           <Image
+                            key={trainer.photo}
                             src={trainer.photo}
                             alt=""
                             fill
@@ -111,11 +153,7 @@ export function AcademyView({
                           />
                         </span>
                         <span className="mt-2 block text-center text-[11px] leading-snug text-uwa-white/80 sm:text-xs">
-                          {trainer.shortName.map((line) => (
-                            <span key={line.en} className="block">
-                              {pick(line, locale)}
-                            </span>
-                          ))}
+                          {pick(trainer.name, locale)}
                         </span>
                       </button>
                     </li>
@@ -124,7 +162,7 @@ export function AcademyView({
               </ul>
             </div>
 
-            <div className="relative aspect-video w-full overflow-hidden bg-[#111] lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start">
+            <div className="relative aspect-video w-full overflow-hidden bg-[#111] lg:col-start-3 lg:row-span-2 lg:self-start">
               {playing && embed?.type === "youtube" ? (
                 <iframe
                   src={`https://www.youtube-nocookie.com/embed/${embed.id}?autoplay=1&playsinline=1&fs=0&rel=0&modestbranding=1`}
@@ -152,13 +190,14 @@ export function AcademyView({
               ) : (
                 <>
                   <Image
+                    key={selected.photo}
                     src={selected.photo}
                     alt=""
                     fill
                     unoptimized
                     quality={100}
                     className="h-full w-full object-cover object-[center_top]"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1024px) 100vw, 46vw"
                     priority
                   />
                   {canPlay ? (
@@ -182,13 +221,19 @@ export function AcademyView({
               )}
             </div>
 
-            <div className="lg:col-start-1 lg:row-start-2 lg:mt-8">
+            <div className="lg:col-start-2 lg:row-start-2">
               <h3 className="font-heading text-2xl uppercase tracking-wide text-uwa-white sm:text-[1.85rem]">
                 {pick(selected.name, locale)}
               </h3>
               <div className="mt-3 max-w-lg space-y-3 text-sm leading-relaxed text-uwa-white/55">
-                <p>{pick(selected.intro, locale)}</p>
-                <p>{pick(selected.bio, locale)}</p>
+                {selected.intro.ua || selected.intro.en ? (
+                  <p>{pick(selected.intro, locale)}</p>
+                ) : null}
+                {selected.bio.map((paragraph) => (
+                  <p key={`${paragraph.ua}-${paragraph.en}`}>
+                    {pick(paragraph, locale)}
+                  </p>
+                ))}
               </div>
 
               <div className="mt-6 flex max-w-lg overflow-x-auto divide-x divide-uwa-white/15 border border-uwa-white/15">

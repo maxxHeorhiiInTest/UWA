@@ -1,7 +1,10 @@
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AcademyView } from "@/components/academy/AcademyView";
-import { academyTrainers } from "@/config/academy";
+import {
+  academyCities,
+  academyTrainerFromRoster,
+} from "@/config/academy";
 import { getWrestlers } from "@/lib/roster-store";
 
 export const dynamic = "force-dynamic";
@@ -19,15 +22,15 @@ export default async function AcademyPage({
     getWrestlers(),
   ]);
 
-  const trainers = academyTrainers.map((trainer) => {
-    const livePhoto = wrestlers.find(
-      (wrestler) => wrestler.id === trainer.wrestlerId
-    )?.photos[0];
-    return {
-      ...trainer,
-      photo: livePhoto || trainer.photo,
-    };
-  });
+  const trainers = academyCities.flatMap((city) =>
+    city.trainers.map((slot) =>
+      academyTrainerFromRoster(
+        city.id,
+        slot,
+        wrestlers.find((wrestler) => wrestler.id === slot.wrestlerId)
+      )
+    )
+  );
 
   return (
     <AcademyView
@@ -36,6 +39,12 @@ export default async function AcademyPage({
         trainers: t("trainers"),
         contacts: t("contacts"),
         play: t("play"),
+        cities: {
+          kyiv: t("cities.kyiv"),
+          dnipro: t("cities.dnipro"),
+          lviv: t("cities.lviv"),
+          kharkiv: t("cities.kharkiv"),
+        },
       }}
       trainers={trainers}
     />

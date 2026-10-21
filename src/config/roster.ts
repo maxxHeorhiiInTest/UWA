@@ -388,6 +388,9 @@ export const seedWrestlers: Wrestler[] = [
   placeholder("footballers", "teams", { ua: "Футболісти", en: "Footballers" }, {
     photos: ["/roster/footballers-hq.png"],
   }),
+  placeholder("brothers-grim", "teams", { ua: "Брати Грім", en: "Brothers Grim" }, {
+    photos: ["/roster/brothers-grim-hq.png"],
+  }),
   placeholder("kostyantyn-knyaz", "managers", {
     ua: "Костянтин Князь",
     en: "Kostyantyn Knyaz",

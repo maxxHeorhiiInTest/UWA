@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { getSiteSettings } from "@/lib/site-settings-store";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SocialRail } from "@/components/layout/SocialRail";
@@ -70,15 +71,13 @@ export async function Hero() {
           {subtitle}
         </p>
 
-        <a
-          href={settings.ticketsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/tickets?from=hero"
           className="mt-6 inline-flex w-fit items-center gap-2.5 bg-uwa-red px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:mt-8"
         >
           {t("ctaPrimary")}
           <ArrowRightIcon className="h-4 w-4" />
-        </a>
+        </Link>
       </div>
 
       <SocialRail />

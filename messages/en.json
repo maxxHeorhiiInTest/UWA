@@ -22,6 +22,13 @@
     "tickets": "Tickets",
     "partners": "Partners"
   },
+  "ticketsPage": {
+    "title": "TICKETS",
+    "description": "Checkout stays on this page. After a successful payment you will get a confirmation from WayForPay.",
+    "iframeTitle": "WayForPay ticket checkout",
+    "fallback": "open checkout on WayForPay",
+    "fallbackHint": "If the form does not load,"
+  },
   "footer": {
     "rights": "© {year} UWA — Ukrainian Wrestling Arena. All rights reserved."
   },
@@ -55,7 +62,13 @@
     "title": "ACADEMY",
     "trainers": "TRAINERS",
     "contacts": "Contacts for enrollment",
-    "play": "Play video"
+    "play": "Play video",
+    "cities": {
+      "kyiv": "Kyiv",
+      "dnipro": "Dnipro",
+      "lviv": "Lviv",
+      "kharkiv": "Kharkiv"
+    }
   },
   "comingSoon": {
     "badge": "Coming soon",

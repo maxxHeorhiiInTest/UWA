@@ -1,15 +1,29 @@
-import type { LocalizedText } from "@/config/roster";
+import type { LocalizedText, Wrestler } from "@/config/roster";
 import { externalLinks } from "@/config/links";
+
+export const academyCityIds = ["kyiv", "dnipro", "lviv", "kharkiv"] as const;
+
+export type AcademyCityId = (typeof academyCityIds)[number];
 
 export type AcademyTrainer = {
   id: string;
+  cityId: AcademyCityId;
   wrestlerId: string;
   name: LocalizedText;
-  shortName: LocalizedText[];
   photo: string;
   intro: LocalizedText;
-  bio: LocalizedText;
+  bio: LocalizedText[];
   videoUrl?: string;
+};
+
+type AcademyCitySlot = {
+  wrestlerId: string;
+  photo: string;
+};
+
+export type AcademyCity = {
+  id: AcademyCityId;
+  trainers: AcademyCitySlot[];
 };
 
 export const academyPhone = "+38097 888 00 00";
@@ -30,46 +44,62 @@ export const academyContactLinks = [
   { label: "YouTube", href: externalLinks.youtube, network: "youtube" as const },
 ];
 
-export const academyTrainers: AcademyTrainer[] = [
+export const academyCities: AcademyCity[] = [
   {
-    id: "diehard-dustin-lee",
-    wrestlerId: "diehard-dustin-lee",
-    name: {
-      ua: "Дайхард Дастін Лі",
-      en: "Diehard Dustin Lee",
-    },
-    shortName: [
-      { ua: "Дайхард Дастін Лі", en: "Diehard Dustin Lee" },
+    id: "kyiv",
+    trainers: [
+      {
+        wrestlerId: "diehard-dustin-lee",
+        photo: "/roster/diehard-dustin-lee-hq.png",
+      },
     ],
-    photo: "/roster/diehard-dustin-lee-hq.png",
-    intro: {
-      ua: "«Дайхард» Дастін Лі (Diehard Dustin Lee) — це американський професійний реслер, який здобув визнання завдяки своїм виступам у жорстоких хардкорних та дезматч-промоушенах.",
-      en: "'Diehard' Dustin Lee is an American professional wrestler who made his name in brutal hardcore and deathmatch promotions.",
-    },
-    bio: {
-      ua: "Він більш відомий участю в екстремальних подіях таких незалежних організацій, як IWA Mid-South та Combat Zone Wrestling (CZW), де часто використовується зброя та нестандартний інвентар.",
-      en: "He is best known for extreme events in independent promotions such as IWA Mid-South and Combat Zone Wrestling (CZW), where weapons and unconventional objects are often used.",
-    },
   },
   {
-    id: "dmytro-gambit-shamrai",
-    wrestlerId: "dmytro-gambit-shamrai",
-    name: {
-      ua: "Дмитро Шамрай Гамбіт",
-      en: "Dmytro Shamrai Gambit",
-    },
-    shortName: [
-      { ua: "Дмитро Шамрай", en: "Dmytro Shamrai" },
-      { ua: "Гамбіт", en: "Gambit" },
+    id: "dnipro",
+    trainers: [{ wrestlerId: "skella", photo: "/roster/skella-hq.png" }],
+  },
+  {
+    id: "lviv",
+    trainers: [
+      {
+        wrestlerId: "viktor-vitrolom",
+        photo: "/roster/viktor-vitrolom-hq.png",
+      },
     ],
-    photo: "/roster/dmytro-gambit-shamrai-hq3.png",
-    intro: {
-      ua: "Дмитро «Гамбіт» Шамрай — неймовірно технічний та винахідливий реслер Української Реслінг Арени.",
-      en: 'Dmytro "Gambit" Shamrai is an exceptionally technical and inventive wrestler of the Ukrainian Wrestling Arena.',
-    },
-    bio: {
-      ua: "На ринзі він відомий картковим образом і винахідливим стилем.",
-      en: "In the ring he is known for his card-themed persona and inventive style.",
-    },
+  },
+  {
+    id: "kharkiv",
+    trainers: [{ wrestlerId: "levin", photo: "/roster/levin-hq.png" }],
   },
 ];
+
+function isStatsLine(text: LocalizedText) {
+  return /^\d+\s*(см|cm)\b/i.test(text.ua) || /^\d+\s*(см|cm)\b/i.test(text.en);
+}
+
+function filledLines(lines: LocalizedText[] | undefined) {
+  return (lines ?? []).filter((line) => line.ua.trim() || line.en.trim());
+}
+
+export function academyTrainerFromRoster(
+  cityId: AcademyCityId,
+  slot: AcademyCitySlot,
+  wrestler?: Wrestler
+): AcademyTrainer {
+  const paragraphs = filledLines(wrestler?.bio);
+  const story = paragraphs.filter((line) => !isStatsLine(line));
+  const source = story.length > 0 ? story : paragraphs;
+  const [intro, ...rest] = source;
+  const videoUrl = wrestler?.videos.find((video) => video.url.trim())?.url;
+
+  return {
+    id: wrestler?.id ?? slot.wrestlerId,
+    cityId,
+    wrestlerId: slot.wrestlerId,
+    name: wrestler?.name ?? { ua: slot.wrestlerId, en: slot.wrestlerId },
+    photo: wrestler?.photos[0] || slot.photo,
+    intro: intro ?? { ua: "", en: "" },
+    bio: rest,
+    videoUrl,
+  };
+}

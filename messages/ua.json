@@ -22,6 +22,13 @@
     "tickets": "Квитки",
     "partners": "Партнерам"
   },
+  "ticketsPage": {
+    "title": "КВИТКИ",
+    "description": "Оплата відкривається на цій сторінці. Після успішної покупки ви отримаєте підтвердження від WayForPay.",
+    "iframeTitle": "Оплата квитка WayForPay",
+    "fallback": "відкрийте оплату на сайті WayForPay",
+    "fallbackHint": "Якщо форма не завантажилась,"
+  },
   "footer": {
     "rights": "© {year} UWA — Ukrainian Wrestling Arena. Усі права захищено."
   },
@@ -55,7 +62,13 @@
     "title": "АКАДЕМІЯ",
     "trainers": "ТРЕНЕРИ",
     "contacts": "Контакти для запису",
-    "play": "Відтворити відео"
+    "play": "Відтворити відео",
+    "cities": {
+      "kyiv": "Київ",
+      "dnipro": "Дніпро",
+      "lviv": "Львів",
+      "kharkiv": "Харків"
+    }
   },
   "comingSoon": {
     "badge": "Скоро",

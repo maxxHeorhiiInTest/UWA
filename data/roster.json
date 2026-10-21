@@ -1860,6 +1860,55 @@
     ]
   },
   {
+    "id": "brothers-grim",
+    "category": "teams",
+    "name": {
+      "ua": "Брати Грім",
+      "en": "Brothers Grim"
+    },
+    "bio": [
+      {
+        "ua": "Ім’я, рингнейм і біографія з’являться тут, щойно буде готовий контент реслера.",
+        "en": "Name, ring name and biography will land here once wrestler copy is ready."
+      },
+      {
+        "ua": "Цей блок повторює структуру Figma: короткий опис, стиль і шлях у промоушені.",
+        "en": "This block follows the Figma structure: a short intro, style, and path in the promotion."
+      },
+      {
+        "ua": "Фото-рендери будуть підставлено окремо — зараз це лише каркас сторінки.",
+        "en": "Photo renders will be swapped in later — this is the page shell only."
+      }
+    ],
+    "photos": [
+      "/roster/brothers-grim-hq.png"
+    ],
+    "titles": [
+      {
+        "ua": "Титул — плейсхолдер",
+        "en": "Title — placeholder"
+      }
+    ],
+    "matches": [
+      {
+        "ua": "Матч — плейсхолдер",
+        "en": "Match — placeholder"
+      }
+    ],
+    "videos": [
+      {
+        "ua": "Відео — плейсхолдер",
+        "en": "Video — placeholder"
+      }
+    ],
+    "rivalries": [
+      {
+        "ua": "Суперництво — плейсхолдер",
+        "en": "Rivalry — placeholder"
+      }
+    ]
+  },
+  {
     "id": "kostyantyn-knyaz",
     "category": "managers",
     "name": {

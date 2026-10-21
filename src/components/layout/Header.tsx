@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { headerNavItems, navItems } from "@/config/nav";
-import { getSiteSettings } from "@/lib/site-settings-store";
 import { Logo } from "@/components/ui/Logo";
 import { SparkleIcon, TicketBadgeIcon } from "@/components/ui/Icons";
 import { NavLink } from "./NavLink";
@@ -9,12 +8,10 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileMenu } from "./MobileMenu";
 
 export async function Header() {
-  const [tNav, tHeader, settings] = await Promise.all([
+  const [tNav, tHeader] = await Promise.all([
     getTranslations("nav"),
     getTranslations("header"),
-    getSiteSettings(),
   ]);
-  const ticketsHref = settings.ticketsUrl;
 
   const items = headerNavItems.map((item) => ({
     href: item.href,
@@ -41,7 +38,7 @@ export async function Header() {
           items={allItems}
           openLabel={tHeader("menuOpen")}
           closeLabel={tHeader("menuClose")}
-          ticketsHref={ticketsHref}
+          ticketsHref="/tickets?from=menu"
           ticketsLabel={tHeader("tickets")}
         />
 
@@ -64,23 +61,19 @@ export async function Header() {
 
           <LocaleSwitcher />
 
-          <a
-            href={ticketsHref}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/tickets?from=header"
             className="inline-flex items-center bg-uwa-red px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:hidden"
           >
             {tHeader("tickets")}
-          </a>
-          <a
-            href={ticketsHref}
-            target="_blank"
-            rel="noopener noreferrer"
+          </Link>
+          <Link
+            href="/tickets?from=header"
             className="hidden items-center gap-2 bg-uwa-red px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:inline-flex"
           >
             <TicketBadgeIcon className="h-4 w-4" />
             {tHeader("tickets")}
-          </a>
+          </Link>
         </div>
       </div>
     </header>

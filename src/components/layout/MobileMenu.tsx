@@ -77,15 +77,13 @@ export function MobileMenu({
               );
             })}
           </nav>
-          <a
+          <Link
             href={ticketsHref}
-            target="_blank"
-            rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
             className="mt-6 inline-flex w-full items-center justify-center bg-uwa-red px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white lg:hidden"
           >
             {ticketsLabel}
-          </a>
+          </Link>
         </div>
       )}
     </div>
