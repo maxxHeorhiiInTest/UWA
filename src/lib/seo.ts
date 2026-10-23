@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import type { Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { externalLinks } from "@/config/links";
+import { type AppLocale, routing } from "@/i18n/routing";
 import {
   absoluteUrl,
   getSiteUrl,
@@ -41,13 +41,20 @@ export const seoPaths: Record<SeoPage, string> = {
   about: "/about",
 };
 
+function asLocale(locale: string): AppLocale {
+  return routing.locales.includes(locale as AppLocale)
+    ? (locale as AppLocale)
+    : routing.defaultLocale;
+}
+
 export async function buildPageMetadata(
   { locale }: { locale: string },
   page: SeoPage
 ): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: "meta" });
+  const appLocale = asLocale(locale);
+  const t = await getTranslations({ locale: appLocale, namespace: "meta" });
   const path = seoPaths[page];
-  const canonical = absoluteUrl(locale, path);
+  const canonical = absoluteUrl(appLocale, path);
   const description = t(`pages.${page}.description`);
   const pageTitle = t(`pages.${page}.title`);
   const title =
@@ -63,8 +70,8 @@ export async function buildPageMetadata(
     },
     openGraph: {
       type: "website",
-      locale: ogLocale(locale),
-      alternateLocale: locale === "en" ? ["uk_UA"] : ["en_US"],
+      locale: ogLocale(appLocale),
+      alternateLocale: appLocale === "en" ? ["uk_UA"] : ["en_US"],
       url: canonical,
       siteName: siteShortName,
       title: socialTitle,
@@ -84,7 +91,7 @@ export function seoMetadata(page: SeoPage) {
   return async function generateMetadata({
     params,
   }: {
-    params: Promise<{ locale: Locale }>;
+    params: Promise<{ locale: AppLocale }>;
   }): Promise<Metadata> {
     return buildPageMetadata(await params, page);
   };
