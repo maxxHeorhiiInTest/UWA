@@ -14,6 +14,7 @@ import {
   type AcademyTrainer,
 } from "@/config/academy";
 import { getVideoEmbed } from "@/lib/video";
+import { track } from "@/lib/analytics";
 import {
   CalendarIcon,
   ClockIcon,
@@ -77,6 +78,11 @@ export function AcademyView({
     setCityId(nextCity);
     setSelectedId(nextTrainer?.id ?? "");
     setPlaying(false);
+    track("select_content", {
+      content_type: "academy_city",
+      item_id: nextCity,
+      item_name: copy.cities[nextCity],
+    });
   }
 
   return (
@@ -130,6 +136,12 @@ export function AcademyView({
                         onClick={() => {
                           setSelectedId(trainer.id);
                           setPlaying(false);
+                          track("select_content", {
+                            content_type: "trainer",
+                            item_id: trainer.id,
+                            item_name: pick(trainer.name, locale),
+                            item_category: trainer.cityId,
+                          });
                         }}
                         className="group w-24 text-left sm:w-28"
                       >
@@ -143,7 +155,7 @@ export function AcademyView({
                           <Image
                             key={trainer.photo}
                             src={trainer.photo}
-                            alt=""
+                            alt={pick(trainer.name, locale)}
                             fill
                             unoptimized
                             quality={100}
@@ -192,7 +204,7 @@ export function AcademyView({
                   <Image
                     key={selected.photo}
                     src={selected.photo}
-                    alt=""
+                    alt={pick(selected.name, locale)}
                     fill
                     unoptimized
                     quality={100}
@@ -203,7 +215,13 @@ export function AcademyView({
                   {canPlay ? (
                     <button
                       type="button"
-                      onClick={() => setPlaying(true)}
+                      onClick={() => {
+                        setPlaying(true);
+                        track("video_start", {
+                          video_title: pick(selected.name, locale),
+                          item_id: selected.id,
+                        });
+                      }}
                       className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-uwa-white ring-1 ring-white/35 backdrop-blur-[2px] transition-colors hover:bg-black/50 sm:h-[5.5rem] sm:w-[5.5rem]"
                       aria-label={copy.play}
                     >

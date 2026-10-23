@@ -1,13 +1,28 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
+import { consumeRateLimit } from "@/lib/rate-limit";
+import { clientIp, isTrustedMutation } from "@/lib/request-guard";
 
 const MAX_VIDEO_BYTES = 80 * 1024 * 1024;
 
 export async function POST(request: Request) {
+  if (!isTrustedMutation(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const uploadLimit = consumeRateLimit(
+    `video:${session.u}:${clientIp(request.headers)}`,
+    30,
+    60 * 60 * 1000
+  );
+  if (!uploadLimit.ok) {
+    return NextResponse.json({ error: "Too many uploads" }, { status: 429 });
   }
 
   const token = process.env.BLOB_READ_WRITE_TOKEN;
@@ -18,7 +33,12 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = (await request.json()) as HandleUploadBody;
+  let body: HandleUploadBody;
+  try {
+    body = (await request.json()) as HandleUploadBody;
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
 
   try {
     const json = await handleUpload({
@@ -44,9 +64,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(json);
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Upload failed" },
-      { status: 400 }
-    );
+    console.error("Admin video upload failed", error);
+    return NextResponse.json({ error: "Upload failed" }, { status: 400 });
   }
 }

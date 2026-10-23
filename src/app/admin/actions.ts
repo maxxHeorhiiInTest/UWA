@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   rosterCategories,
@@ -15,6 +16,8 @@ import {
   requireAdmin,
   setSessionCookie,
 } from "@/lib/auth";
+import { consumeRateLimit, resetRateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/request-guard";
 import {
   deleteWrestler,
   getWrestlers,
@@ -31,12 +34,37 @@ export type SaveState =
   | { error: string }
   | undefined;
 
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_ATTEMPTS = 8;
+const LOGIN_FIELD_MAX = 128;
+
 export async function loginAction(_state: AuthState, formData: FormData) {
   const username = String(formData.get("username") ?? "");
   const password = String(formData.get("password") ?? "");
+  if (
+    username.length === 0 ||
+    password.length === 0 ||
+    username.length > LOGIN_FIELD_MAX ||
+    password.length > LOGIN_FIELD_MAX
+  ) {
+    return { error: "Невірний логін або пароль." };
+  }
+
+  const ip = clientIp(await headers());
+  const ipKey = `login:ip:${ip}`;
+  const userKey = `login:user:${username.toLowerCase()}`;
+  const ipLimit = consumeRateLimit(ipKey, LOGIN_ATTEMPTS, LOGIN_WINDOW_MS);
+  const userLimit = consumeRateLimit(userKey, LOGIN_ATTEMPTS, LOGIN_WINDOW_MS);
+  if (!ipLimit.ok || !userLimit.ok) {
+    return { error: "Забагато спроб. Спробуйте через кілька хвилин." };
+  }
+
   if (!credentialsMatch(username, password)) {
     return { error: "Невірний логін або пароль." };
   }
+
+  resetRateLimit(ipKey);
+  resetRateLimit(userKey);
   await setSessionCookie(username);
   redirect("/admin");
 }

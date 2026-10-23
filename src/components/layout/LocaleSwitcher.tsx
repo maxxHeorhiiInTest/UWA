@@ -3,6 +3,7 @@
 import { useLocale } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { track } from "@/lib/analytics";
 
 export function LocaleSwitcher() {
   const activeLocale = useLocale();
@@ -15,6 +16,14 @@ export function LocaleSwitcher() {
           key={locale}
           href={pathname}
           locale={locale}
+          onClick={() => {
+            if (locale !== activeLocale) {
+              track("locale_change", {
+                from_locale: activeLocale,
+                to_locale: locale,
+              });
+            }
+          }}
           className={`transition-colors ${
             locale === activeLocale
               ? "text-uwa-white"

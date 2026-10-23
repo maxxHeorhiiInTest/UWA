@@ -43,9 +43,9 @@ export function RoadmapList({ items }: { items: RoadmapNode[] }) {
             key={index}
             className="rounded-xl border border-uwa-panel-border bg-uwa-panel p-5"
           >
-            <div className="font-heading text-base tracking-wide text-uwa-white">
+            <h3 className="font-heading text-base tracking-wide text-uwa-white">
               <RoadmapNodeLabel node={item} />
-            </div>
+            </h3>
             <RoadmapNodeNote node={item} />
             {children && children.length > 0 && (
               <RoadmapChildren nodes={children} />

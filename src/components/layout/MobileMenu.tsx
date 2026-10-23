@@ -2,18 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
+import { TicketsTrigger } from "@/components/tickets/TicketsProvider";
 
 export function MobileMenu({
   items,
   openLabel,
   closeLabel,
-  ticketsHref,
   ticketsLabel,
 }: {
   items: { href: string; label: string }[];
   openLabel: string;
   closeLabel: string;
-  ticketsHref: string;
   ticketsLabel: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,13 +76,13 @@ export function MobileMenu({
               );
             })}
           </nav>
-          <Link
-            href={{ pathname: ticketsHref, query: { from: "menu" } }}
+          <TicketsTrigger
+            source="menu"
             onClick={() => setIsOpen(false)}
             className="mt-6 inline-flex w-full items-center justify-center bg-uwa-red px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-uwa-white lg:hidden"
           >
             {ticketsLabel}
-          </Link>
+          </TicketsTrigger>
         </div>
       )}
     </div>

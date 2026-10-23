@@ -1,0 +1,94 @@
+<script>
+(function () {
+  var DIRECT = {
+    source: "web",
+    medium: "referral",
+    content: "DirectUTM"
+  };
+
+  function readStored() {
+    try {
+      var raw = localStorage.getItem("uwa_utm");
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var match = document.cookie.match(/(?:^|; )uwa_utm=([^;]*)/);
+    if (!match) return null;
+    try {
+      return JSON.parse(decodeURIComponent(match[1]));
+    } catch (e2) {
+      return null;
+    }
+  }
+
+  function campaignFromUrl(href) {
+    try {
+      var url = new URL(href, window.location.href);
+      var fromQuery = url.searchParams.get("utm_campaign");
+      if (fromQuery) return fromQuery;
+      var parts = url.pathname.split("/").filter(Boolean);
+      var at = parts.indexOf("payment");
+      if (at !== -1 && parts[at + 1]) return decodeURIComponent(parts[at + 1]);
+    } catch (e) {}
+    return "";
+  }
+
+  function paymentCampaign() {
+    var campaign = campaignFromUrl(window.location.href);
+    if (campaign) return campaign;
+    if (document.referrer) return campaignFromUrl(document.referrer);
+    return "";
+  }
+
+  var stored = readStored();
+  var directCampaign = stored ? "" : paymentCampaign();
+  var utm = stored || {
+    source: DIRECT.source,
+    medium: DIRECT.medium,
+    campaign: directCampaign,
+    content: DIRECT.content
+  };
+
+  if (!stored) {
+    try {
+      var url = new URL(window.location.href);
+      url.searchParams.set("utm_source", DIRECT.source);
+      url.searchParams.set("utm_medium", DIRECT.medium);
+      url.searchParams.set("utm_content", DIRECT.content);
+      if (directCampaign) url.searchParams.set("utm_campaign", directCampaign);
+      history.replaceState(null, "", url.pathname + url.search + url.hash);
+    } catch (e3) {}
+  }
+
+  var attempt = (stored && stored.attempt) || "";
+  var dedupKey = "uwa_confirmed_" + (attempt || "legacy");
+  try {
+    if (sessionStorage.getItem(dedupKey)) return;
+  } catch (e4) {}
+
+  window.dataLayer = window.dataLayer || [];
+  if (typeof window.gtag !== "function") {
+    window.gtag = function () { window.dataLayer.push(arguments); };
+  }
+
+  if (!stored) {
+    var campaignFields = {
+      campaign_source: DIRECT.source,
+      campaign_medium: DIRECT.medium,
+      campaign_content: DIRECT.content
+    };
+    if (directCampaign) campaignFields.campaign_name = directCampaign;
+    window.gtag("set", campaignFields);
+  }
+
+  window.gtag("event", "ticket_confirmed", {
+    ticket_source: utm.source || "",
+    ticket_medium: utm.medium || "",
+    ticket_campaign: utm.campaign || "",
+    ticket_content: utm.content || "",
+    ticket_attempt: attempt,
+    transport_type: "beacon"
+  });
+
+  try { sessionStorage.setItem(dedupKey, "1"); } catch (e5) {}
+})();
+</script>

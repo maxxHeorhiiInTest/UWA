@@ -11,6 +11,7 @@ import {
   type WrestlerVideo,
 } from "@/config/roster";
 import { getVideoEmbed } from "@/lib/video";
+import { track } from "@/lib/analytics";
 import { SocialRail } from "@/components/layout/SocialRail";
 import { ChevronDownIcon } from "@/components/ui/Icons";
 
@@ -95,7 +96,14 @@ export function RosterView({
                 <button
                   key={key}
                   type="button"
-                  onClick={() => setCategory(key)}
+                  onClick={() => {
+                    setCategory(key);
+                    track("select_content", {
+                      content_type: "roster_category",
+                      item_id: key,
+                      item_name: copy.categories[key],
+                    });
+                  }}
                   className={`shrink-0 rounded-md px-4 py-2.5 text-xs font-medium uppercase tracking-wide transition-colors sm:px-8 sm:py-[1.125rem] sm:text-sm lg:w-full ${
                     active
                       ? "bg-uwa-red text-uwa-white"
@@ -118,6 +126,12 @@ export function RosterView({
                       onClick={() => {
                         setSelectedId(wrestler.id);
                         setOpenSection(null);
+                        track("select_content", {
+                          content_type: "wrestler",
+                          item_id: wrestler.id,
+                          item_name: pick(wrestler.name, locale),
+                          item_category: wrestler.category,
+                        });
                       }}
                       className="group flex w-full flex-col items-center gap-2 text-center sm:gap-2.5"
                     >
@@ -125,7 +139,7 @@ export function RosterView({
                         {wrestler.photos[0] ? (
                           <Image
                             src={wrestler.photos[0]}
-                            alt=""
+                            alt={pick(wrestler.name, locale)}
                             fill
                             unoptimized
                             quality={100}
@@ -221,7 +235,7 @@ function WrestlerDialog({
           {wrestler.photos[0] ? (
             <Image
               src={wrestler.photos[0]}
-              alt=""
+              alt={pick(wrestler.name, locale)}
               fill
               unoptimized
               quality={100}

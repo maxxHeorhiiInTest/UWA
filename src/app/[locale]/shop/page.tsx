@@ -2,6 +2,9 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ComingSoonPage } from "@/components/ui/ComingSoonPage";
 import type { RoadmapNode } from "@/types/roadmap";
+import { seoMetadata } from "@/lib/seo";
+
+export const generateMetadata = seoMetadata("shop");
 
 export default async function ShopPage({
   params,

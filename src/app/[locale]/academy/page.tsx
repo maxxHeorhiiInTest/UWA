@@ -6,9 +6,11 @@ import {
   academyTrainerFromRoster,
 } from "@/config/academy";
 import { getWrestlers } from "@/lib/roster-store";
+import { seoMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const generateMetadata = seoMetadata("academy");
 
 export default async function AcademyPage({
   params,

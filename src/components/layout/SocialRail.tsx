@@ -1,4 +1,7 @@
+"use client";
+
 import { externalLinks } from "@/config/links";
+import { track } from "@/lib/analytics";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -25,6 +28,13 @@ export function SocialRail() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={social.label}
+          onClick={() =>
+            track("click", {
+              link_url: social.href,
+              link_text: social.label,
+              outbound: true,
+            })
+          }
           className="flex h-11 w-11 items-center justify-center bg-black text-uwa-white/70 transition-colors hover:bg-uwa-red hover:text-uwa-white"
         >
           <social.Icon className="h-4 w-4" />

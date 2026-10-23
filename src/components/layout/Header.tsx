@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { headerNavItems, navItems } from "@/config/nav";
 import { Logo } from "@/components/ui/Logo";
 import { SparkleIcon, TicketBadgeIcon } from "@/components/ui/Icons";
+import { TicketsTrigger } from "@/components/tickets/TicketsProvider";
 import { NavLink } from "./NavLink";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileMenu } from "./MobileMenu";
@@ -38,7 +39,6 @@ export async function Header() {
           items={allItems}
           openLabel={tHeader("menuOpen")}
           closeLabel={tHeader("menuClose")}
-          ticketsHref="/tickets"
           ticketsLabel={tHeader("tickets")}
         />
 
@@ -61,19 +61,19 @@ export async function Header() {
 
           <LocaleSwitcher />
 
-          <Link
-            href={{ pathname: "/tickets", query: { from: "header" } }}
+          <TicketsTrigger
+            source="header"
             className="inline-flex items-center bg-uwa-red px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:hidden"
           >
             {tHeader("tickets")}
-          </Link>
-          <Link
-            href={{ pathname: "/tickets", query: { from: "header" } }}
+          </TicketsTrigger>
+          <TicketsTrigger
+            source="header"
             className="hidden items-center gap-2 bg-uwa-red px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-uwa-white transition-colors hover:bg-uwa-red-dark sm:inline-flex"
           >
             <TicketBadgeIcon className="h-4 w-4" />
             {tHeader("tickets")}
-          </Link>
+          </TicketsTrigger>
         </div>
       </div>
     </header>

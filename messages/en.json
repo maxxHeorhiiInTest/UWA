@@ -1,7 +1,59 @@
 {
   "meta": {
     "title": "UWA — Ukrainian Wrestling Arena",
-    "description": "UWA is Ukraine's premier wrestling promotion: events, roster, titles and news."
+    "shortTitle": "UWA",
+    "description": "UWA is Ukraine's professional wrestling promotion: roster, academy, tickets and arena news.",
+    "ogAlt": "UWA wrestlers in the Ukrainian Wrestling Arena",
+    "pages": {
+      "home": {
+        "title": "UWA — Ukrainian Wrestling Arena",
+        "description": "UWA is Ukraine's professional wrestling promotion: roster, academy, tickets and arena news."
+      },
+      "roster": {
+        "title": "Roster",
+        "description": "The official UWA roster: wrestlers, teams, managers, referees and alumni of Ukrainian Wrestling Arena."
+      },
+      "academy": {
+        "title": "Academy",
+        "description": "UWA Academy — wrestling training in Kyiv, Dnipro, Lviv and Kharkiv. Coaches, schedule and enrollment contacts."
+      },
+      "tickets": {
+        "title": "Tickets",
+        "description": "Buy tickets to Ukrainian Wrestling Arena shows. Secure checkout via WayForPay."
+      },
+      "events": {
+        "title": "Events",
+        "description": "The UWA event calendar. Upcoming Ukrainian Wrestling Arena shows will be announced here."
+      },
+      "titles": {
+        "title": "Titles",
+        "description": "UWA championship titles. Belt history and champions of Ukrainian Wrestling Arena are coming soon."
+      },
+      "matches": {
+        "title": "Matches",
+        "description": "UWA match results. The Ukrainian Wrestling Arena bout archive will appear in this section."
+      },
+      "news": {
+        "title": "News",
+        "description": "UWA news: show announcements, reports and behind-the-scenes from Ukrainian Wrestling Arena."
+      },
+      "media": {
+        "title": "Media",
+        "description": "UWA photos and videos. The Ukrainian Wrestling Arena media library is coming here."
+      },
+      "universe": {
+        "title": "UWA Universe",
+        "description": "Promotion history, factions and the Hall of Fame of Ukrainian Wrestling Arena."
+      },
+      "shop": {
+        "title": "Shop",
+        "description": "Official UWA merch. Ukrainian Wrestling Arena apparel and gear is coming soon."
+      },
+      "about": {
+        "title": "About Us",
+        "description": "About UWA: mission, team, partners and contacts for Ukrainian Wrestling Arena."
+      }
+    }
   },
   "nav": {
     "home": "Home",
@@ -26,6 +78,7 @@
     "title": "TICKETS",
     "description": "Checkout stays on this page. After a successful payment you will get a confirmation from WayForPay.",
     "iframeTitle": "WayForPay ticket checkout",
+    "close": "Close",
     "fallback": "open checkout on WayForPay",
     "fallbackHint": "If the form does not load,"
   },

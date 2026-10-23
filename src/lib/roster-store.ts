@@ -229,13 +229,29 @@ export async function deleteWrestler(id: string) {
   return true;
 }
 
+function imageExtension(type: string, buffer: Buffer) {
+  if (type === "image/png" && buffer[0] === 0x89 && buffer[1] === 0x50) {
+    return "png";
+  }
+  if (type === "image/jpeg" && buffer[0] === 0xff && buffer[1] === 0xd8) {
+    return "jpg";
+  }
+  if (
+    type === "image/webp" &&
+    buffer.toString("ascii", 0, 4) === "RIFF" &&
+    buffer.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    return "webp";
+  }
+  return null;
+}
+
 export async function savePhoto(id: string, file: File) {
-  const allowed = new Map([
-    ["image/png", "png"],
-    ["image/jpeg", "jpg"],
-    ["image/webp", "webp"],
-  ]);
-  const ext = allowed.get(file.type);
+  if (file.size > 8 * 1024 * 1024) {
+    throw new Error("Image is too large");
+  }
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const ext = imageExtension(file.type, buffer);
   if (!ext) {
     throw new Error("Unsupported image type");
   }
@@ -256,7 +272,6 @@ export async function savePhoto(id: string, file: File) {
   }
   await fs.mkdir(PHOTO_DIR, { recursive: true });
   const dest = path.join(PHOTO_DIR, filename);
-  const buffer = Buffer.from(await file.arrayBuffer());
   await fs.writeFile(dest, buffer);
   return `/roster/${filename}`;
 }

@@ -3,10 +3,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RosterView } from "@/components/roster/RosterView";
 import type { RosterCategory } from "@/config/roster";
 import { getWrestlers } from "@/lib/roster-store";
+import { seoMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
+export const generateMetadata = seoMetadata("roster");
 
 export default async function RosterPage({
   params,
